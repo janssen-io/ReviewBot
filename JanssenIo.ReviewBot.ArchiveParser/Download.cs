@@ -49,10 +49,13 @@ namespace JanssenIo.ReviewBot.ArchiveParser
             private Uri GetArchiveUri()
             {
                 DateTime lastRunDate = config.LastRunDate ?? DateTime.MinValue;
+                DateTime today = DateTime.Today;
 
                 var parameters = new StringBuilder();
                 parameters.Append("?tqx=out:csv");
-                parameters.Append($"&tq=SELECT * WHERE A >= date '{lastRunDate:yyyy-MM-dd}'");
+                parameters.Append(
+                    $"&tq=SELECT * WHERE A >= date '{lastRunDate:yyyy-MM-dd}'"
+                    + $" AND A < date '{today:yyyy-MM-dd}'");
 
                 return new UriBuilder(config.Location!)
                 {
