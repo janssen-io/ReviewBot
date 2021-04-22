@@ -30,6 +30,7 @@ namespace JanssenIo.ReviewBot.CommandHandlers
 
             var text = new StringBuilder($"{author}'s latest reviews:");
             text.AppendLine();
+            text.AppendLine();
             text.AppendLine(MarkdownListFormatter.Format(mostRecentReviews));
 
             return new[] { text.ToString() };

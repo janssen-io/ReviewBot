@@ -14,7 +14,7 @@ namespace JanssenIo.ReviewBot.CommandHandlers
 
             return string.Join(
                 Environment.NewLine,
-                reviews.Select(r => $"*{r.Score} - [{r.Bottle}]({r.Link})"));
+                reviews.Select(r => $"* {r.Score} - [{r.Bottle}]({r.Link})"));
         }
     }
 }
