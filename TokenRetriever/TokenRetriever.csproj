@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Reddit" Version="1.5.0" />
+    <PackageReference Include="Reddit.AuthTokenRetrieverLib" Version="1.5.1" />
+  </ItemGroup>
+
+</Project>

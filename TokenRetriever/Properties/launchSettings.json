@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TokenRetriever": {
+      "commandName": "Project",
+      "commandLineArgs": "65010"
+    }
+  }
+}
