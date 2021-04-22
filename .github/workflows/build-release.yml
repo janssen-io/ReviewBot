@@ -1,0 +1,53 @@
+name: Release
+
+on: workflow_dispatch
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+    - name: Test
+      run: dotnet test --no-build --verbosity normal --configuration Release
+    - name: Install dotnet-script
+      run: dotnet tool install --global dotnet-script
+    - name: Publish
+      run: dotnet publish --no-build --configuration Release
+    - name: Create Secrets
+      env:
+          AI_IKEY: ${{ secrets.AI_IKEY }}
+          BOT_ID: ${{ secrets.BOT_ID }}
+          BOT_SECRET: ${{ secrets.BOT_SECRET }}
+          BOT_REFRESHTOKEN: ${{ secrets.BOT_REFRESHTOKEN }}
+          LITEDB_CONNECTIONSTRING: ${{ secrets.LITEDB_CONNECTIONSTRING }}
+      run: |
+        dotnet-script JanssenIo.ReviewBot/CreateSecrets.cs JanssenIo.ReviewBot/bin/Release/net5.0/publish/secrets.json
+        dotnet-script JanssenIo.ReviewBot.ArchiveParser/CreateSecrets.cs JanssenIo.ReviewBot.ArchiveParser/bin/Release/net5.0/publish/secrets.json
+
+    - name: Add SSH key
+      env:
+          DEPLOY_SSHKEY: ${{ secrets.DEPLOY_SSHKEY }}
+      run: |
+        echo "${DEPLOY_SSHKEY}" > id &&
+        chmod 0400 id &&
+        echo "🔐 Added ssh key";
+
+    # todo: manage processes and neatly stop them first.
+    - name: Clean target
+      run: ssh -o 'StrictHostKeyChecking no' -i id -p 25022 reviewbot@reviewbot.jazz.garden "rm -rf bot parser && exit"
+
+    - name: Copy files (Parser)
+      run: scp -o 'StrictHostKeyChecking no' -i id -P 25022 -r JanssenIo.ReviewBot.ArchiveParser/bin/Release/net5.0/publish/ reviewbot@reviewbot.jazz.garden:~/parser
+
+    - name: Copy files (Bot)
+      run: scp -o 'StrictHostKeyChecking no' -i id -P 25022 -r JanssenIo.ReviewBot/bin/Release/net5.0/publish/ reviewbot@reviewbot.jazz.garden:~/bot

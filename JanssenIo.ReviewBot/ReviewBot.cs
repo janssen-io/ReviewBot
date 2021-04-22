@@ -113,8 +113,7 @@ namespace JanssenIo.ReviewBot
                     try
                     {
                         HandleMessage(message);
-                        if (message.Author == "FlockOnFire")
-                            reddit.Account.Messages.ReadMessage(message.Name);
+                        reddit.Account.Messages.ReadMessage(message.Name);
                     }
                     catch(Exception e)
                     {
