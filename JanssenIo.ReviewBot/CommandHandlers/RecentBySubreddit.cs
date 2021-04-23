@@ -18,7 +18,7 @@ namespace JanssenIo.ReviewBot.CommandHandlers
 
         public IEnumerable<string> ReplyTo(string author, string body)
         {
-            var regex = new Regex("/u/review_bot (/r/[a-z0-9][a-z0-9_]{2,20})", RegexOptions.IgnoreCase);
+            var regex = new Regex("u/review_bot (/r/[a-z0-9][a-z0-9_]{2,20})", RegexOptions.IgnoreCase);
             var matches = regex.Matches(body);
             if (matches.Count == 0)
                 yield break;
