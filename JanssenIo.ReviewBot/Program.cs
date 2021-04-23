@@ -25,8 +25,7 @@ namespace JanssenIo.ReviewBot
                     var key = host.Configuration.GetValue<string>("ApplicationInsights:InstrumentationKey");
 
                     logger
-                        .AddApplicationInsights(key)
-                        .AddFilter<ApplicationInsightsLoggerProvider>(logLevel => logLevel >= LogLevel.Information);
+                        .AddApplicationInsights(key);
 
 #pragma warning disable S3358 // Ternary operators should not be nested
                     var consoleLevel
