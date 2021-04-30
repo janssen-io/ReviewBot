@@ -64,6 +64,7 @@ namespace JanssenIo.ReviewBot
             services.AddTransient<IReplyToCommands, RecentByBottleHandler>();
             services.AddTransient<IReplyToCommands, RecentByRegionHandler>();
             services.AddTransient<IReplyToCommands, RecentBySubredditHandler>();
+            services.AddTransient<IReplyToCommands, OldBottleCommandHandler>();
 
             services.BindConfiguration<ReviewBot.Configuration>(context, "ReviewBot");
             services.BindConfiguration<StoreConfiguration>(context, "Store");
