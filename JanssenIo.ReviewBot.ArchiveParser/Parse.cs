@@ -53,6 +53,7 @@ namespace JanssenIo.ReviewBot.ArchiveParser
                     try 
                     { 
                         review = csvReader.GetRecord<Review>();
+                        logger.LogDebug("Success {Author} {Bottle}", review.Author, review.Bottle);
                         numRows++;
                     }
                     catch (Exception e) 
@@ -82,7 +83,17 @@ namespace JanssenIo.ReviewBot.ArchiveParser
             {
                 var us = CultureInfo.GetCultureInfo("us-US");
                 var nl = CultureInfo.GetCultureInfo("nl-NL");
-                string[] formats = us.DateTimeFormat.GetAllDateTimePatterns()
+                string[] formats =
+                    new[]
+                    {
+                        "MM/dd/yy", "M/d/yy",
+                        "MM-dd-yy", "M-d-yy",
+                        "MM.dd.yy", "M.d.yy",
+                        "dd/MM/yy", "d/M/yy",
+                        "dd-MM-yy", "d-MM-yy",
+                        "dd.MM.yy", "d.MM.yy",
+                    }
+                    .Union(us.DateTimeFormat.GetAllDateTimePatterns())
                     .Union(nl.DateTimeFormat.GetAllDateTimePatterns())
                     .ToArray();
 
