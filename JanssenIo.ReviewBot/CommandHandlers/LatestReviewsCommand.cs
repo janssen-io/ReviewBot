@@ -17,7 +17,7 @@ namespace JanssenIo.ReviewBot.CommandHandlers
 
         public IEnumerable<string> ReplyTo(string author, string body)
         {
-            if (!body.Contains("u/review_bot latest"))
+            if (!body.ToLower().Contains("u/review_bot latest"))
                 return Enumerable.Empty<string>();
 
             var mostRecentReviews = this.reviews

@@ -5,7 +5,7 @@ namespace JanssenIo.ReviewBot.Tests
 {
     public class LatestReviewsTests : LatestListingTests<LatestReviewsHandler>
     {
-        protected override string Command => "/u/review_bot latest";
+        protected override string Command => "/u/Review_Bot latest";
 
         [Fact]
         public void AlwaysReturnsASingleReply()

@@ -9,7 +9,7 @@ namespace JanssenIo.ReviewBot.Tests
 {
     public class MostRecentByBottleTests : LatestListingTests<RecentByBottleHandler>
     {
-        protected override string Command => "/u/review_bot bottle 'Ardbeg'";
+        protected override string Command => "/u/Review_bot bottle 'Ardbeg'";
 
         [Fact]
         public void FiltersByBottle()
