@@ -1,5 +1,5 @@
 ﻿using JanssenIo.ReviewBot.ArchiveParser;
-using LiteDB;
+using Microsoft.Azure.Cosmos;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,9 +9,9 @@ namespace JanssenIo.ReviewBot.CommandHandlers
 {
     public class RecentBySubredditHandler : IReplyToCommands
     {
-        private readonly ILiteCollection<Review> reviews;
+        private readonly IQueryReviews reviews;
 
-        public RecentBySubredditHandler(ILiteCollection<Review> reviews)
+        public RecentBySubredditHandler(IQueryReviews reviews)
         {
             this.reviews = reviews;
         }
@@ -30,13 +30,9 @@ namespace JanssenIo.ReviewBot.CommandHandlers
             foreach(var subreddit in subreddits)
             {
                 var mostRecentReviews = this.reviews
-                    .Query()
                     .Where(review => review.Author != null && review.Link != null
                        && review.Author.ToLower() == author.ToLower()
-                       && review.Link.ToLower().Contains(subreddit.ToLower()))
-                    .OrderByDescending(r => r.PublishedOn)
-                    .Limit(10)
-                    .ToArray();
+                       && review.Link.ToLower().Contains(subreddit.ToLower()));
 
                 var text = new StringBuilder($"{author}'s latest reviews in {subreddit}:");
                 text.AppendLine();

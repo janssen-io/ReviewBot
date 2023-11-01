@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -43,9 +44,9 @@ namespace JanssenIo.ReviewBot.ArchiveParser
                         location = await downloader.Download();
 
                         using var reader = new FileStream(location, FileMode.Open);
-                        var reviews = parser.Parse(reader);
+                        var reviews = parser.Parse(reader).ToArray();
 
-                        inserter.SaveMany(reviews);
+                        await inserter.SaveMany(reviews);
 
                         logger.LogInformation(new EventId(1), "ArchiveParser completed successfully.");
                         UpdateLastRun();

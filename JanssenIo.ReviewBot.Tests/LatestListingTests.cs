@@ -1,10 +1,10 @@
 ﻿using JanssenIo.ReviewBot.ArchiveParser;
 using JanssenIo.ReviewBot.CommandHandlers;
 using LiteDB;
+using Microsoft.Azure.Cosmos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -16,13 +16,15 @@ namespace JanssenIo.ReviewBot.Tests
         protected abstract T CreateSut();
         protected abstract string Command { get; }
 
-        protected readonly ILiteCollection<Review> reviews;
+        protected readonly IQueryReviews reviews;
         protected readonly T sut;
+
+        protected readonly List<Review> database;
 
         protected LatestListingTests()
         {
-            var db = new LiteDatabase(":memory:");
-            this.reviews = db.GetCollection<Review>("reviews");
+            this.database = new List<Review>();
+            this.reviews = new Latest10Query(new MockReviewStore(this.database));
             this.sut = CreateSut();
         }
 
@@ -40,7 +42,7 @@ namespace JanssenIo.ReviewBot.Tests
         public void FiltersByAuthor()
         {
             // Arrange
-            var myReview = new Review 
+            var myReview = new Review
             {
                 Author = "Author 1",
                 Bottle = "Ardbeg 10",
@@ -48,7 +50,7 @@ namespace JanssenIo.ReviewBot.Tests
                 Region = "Islay",
             };
 
-            var otherReview = new Review 
+            var otherReview = new Review
             {
                 Author = "Author 2",
                 Bottle = "Ardbeg 20",
@@ -56,15 +58,16 @@ namespace JanssenIo.ReviewBot.Tests
                 Region = "Islay",
             };
 
-            this.reviews.Insert(myReview);
-            this.reviews.Insert(otherReview);
+            this.database.Add(myReview);
+            this.database.Add(otherReview);
 
             // Act
             var replies = this.sut.ReplyTo(myReview.Author, Command);
 
             // Assert
-            Assert.Contains(myReview.Bottle, replies.Single());
-            Assert.DoesNotContain(otherReview.Bottle, replies.Single());
+            string reply = Assert.Single(replies);
+            Assert.Contains(myReview.Bottle, reply);
+            Assert.DoesNotContain(otherReview.Bottle, reply);
         }
 
         [Fact]
@@ -91,7 +94,7 @@ namespace JanssenIo.ReviewBot.Tests
                 }
             };
 
-            this.reviews.InsertBulk(newReviews);
+            this.database.AddRange(newReviews);
 
             // Act
             var replies = this.sut.ReplyTo(newReviews[0].Author, Command);
@@ -117,7 +120,7 @@ namespace JanssenIo.ReviewBot.Tests
                     Region = "Islay",
                 }).ToArray();
 
-            this.reviews.InsertBulk(newReviews);
+            this.database.AddRange(newReviews);
 
             // Act
             var replies = this.sut.ReplyTo(newReviews[0].Author, Command);

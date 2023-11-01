@@ -1,6 +1,7 @@
 ﻿using JanssenIo.ReviewBot.ArchiveParser;
-using LiteDB;
+using Microsoft.Azure.Cosmos;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -8,9 +9,9 @@ namespace JanssenIo.ReviewBot.CommandHandlers
 {
     public class RecentByRegionHandler : IReplyToCommands
     {
-        private readonly ILiteCollection<Review> reviews;
+        private readonly IQueryReviews reviews;
 
-        public RecentByRegionHandler(ILiteCollection<Review> reviews)
+        public RecentByRegionHandler(IQueryReviews reviews)
         {
             this.reviews = reviews;
         }
@@ -26,13 +27,9 @@ namespace JanssenIo.ReviewBot.CommandHandlers
             {
                 var region = match.Groups[2].Value;
                 var mostRecentReviews = this.reviews
-                    .Query()
                     .Where(review => review.Author != null && review.Region != null
                        && review.Author.ToLower() == author.ToLower()
-                       && review.Region.ToLower().Contains(region.ToLower()))
-                    .OrderByDescending(r => r.PublishedOn)
-                    .Limit(10)
-                    .ToArray();
+                       && review.Region.ToLower().Contains(region.ToLower()));
 
                 var text = new StringBuilder($"{author}'s latest '{region}' reviews:");
                 text.AppendLine();

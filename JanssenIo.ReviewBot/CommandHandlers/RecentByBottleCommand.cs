@@ -1,16 +1,17 @@
 ﻿using JanssenIo.ReviewBot.ArchiveParser;
-using LiteDB;
+using Microsoft.Azure.Cosmos;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Text.RegularExpressions;
+using System.Text;
 
 namespace JanssenIo.ReviewBot.CommandHandlers
 {
     public class RecentByBottleHandler : IReplyToCommands
     {
-        private readonly ILiteCollection<Review> reviews;
+        private readonly IQueryReviews reviews;
 
-        public RecentByBottleHandler(ILiteCollection<Review> reviews)
+        public RecentByBottleHandler(IQueryReviews reviews)
         {
             this.reviews = reviews;
         }
@@ -26,13 +27,9 @@ namespace JanssenIo.ReviewBot.CommandHandlers
             {
                 var bottle = match.Groups[2].Value;
                 var mostRecentReviews = this.reviews
-                    .Query()
                     .Where(review => review.Author != null && review.Bottle != null
                        && review.Author.ToLower() == author.ToLower()
-                       && review.Bottle.ToLower().Contains(bottle.ToLower()))
-                    .OrderByDescending(r => r.PublishedOn)
-                    .Limit(10)
-                    .ToArray();
+                       && review.Bottle.ToLower().Contains(bottle.ToLower()));
 
                 var text = new StringBuilder($"{author}'s latest '{bottle}' reviews:");
                 text.AppendLine();

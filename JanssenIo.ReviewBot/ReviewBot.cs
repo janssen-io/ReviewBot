@@ -31,23 +31,17 @@ namespace JanssenIo.ReviewBot
         {
             private readonly IHostApplicationLifetime appLifeTime;
             private readonly ILogger<Service> logger;
-            private readonly ILogger<InboxReplier> inboxLogger;
-            private readonly IEnumerable<IReplyToCommands> repliers;
-            private readonly Configuration config;
+            private readonly InboxReplier inbox;
 
             public Service(
                 IHostApplicationLifetime appLifeTime,
                 ILogger<Service> logger,
-                ILogger<InboxReplier> inboxLogger,
-                IEnumerable<IReplyToCommands> repliers,
-                Configuration config
+                InboxReplier inbox
                 )
             {
                 this.appLifeTime = appLifeTime;
                 this.logger = logger;
-                this.inboxLogger = inboxLogger;
-                this.repliers = repliers;
-                this.config = config;
+                this.inbox = inbox;
             }
 
             public Task StartAsync(CancellationToken cancellationToken)
@@ -56,16 +50,9 @@ namespace JanssenIo.ReviewBot
                 {
                     Task.Run(() =>
                     {
-                        RedditClient? reddit = null;
                         try
                         {
-                            reddit = new RedditClient(
-                                appId: config.AppId,
-                                refreshToken: config.RefreshToken,
-                                appSecret: config.AppSecret);
-
-                            new InboxReplier(reddit, inboxLogger, repliers)
-                                .ReadMessages();
+                            inbox.ReadMessages();
                         }
                         catch (Exception e)
                         {

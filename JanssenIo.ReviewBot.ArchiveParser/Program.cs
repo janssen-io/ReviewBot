@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -19,10 +20,12 @@ namespace JanssenIo.ReviewBot.ArchiveParser
                 .ConfigureLogging((host, logger) => {
                     logger.ClearProviders();
 
-                    var key = host.Configuration.GetValue<string>("ApplicationInsights:InstrumentationKey");
+                    var key = host.Configuration.GetValue<string>("ApplicationInsights:ConnectionString");
 
                     logger
-                        .AddApplicationInsights(key);
+                        .AddApplicationInsights(
+                            configureTelemetryConfiguration: a => a.ConnectionString = key,
+                            configureApplicationInsightsLoggerOptions: _ => { });
 
 #pragma warning disable S3358 // Ternary operators should not be nested
                     var consoleLevel
@@ -47,8 +50,8 @@ namespace JanssenIo.ReviewBot.ArchiveParser
         static void ConfigureAppConfig(IConfigurationBuilder config)
         {
             config
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile("secrets.json", optional: false, reloadOnChange: true)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile("secrets.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables();
         }
 
@@ -62,7 +65,20 @@ namespace JanssenIo.ReviewBot.ArchiveParser
 
             services.AddTransient<Download.IFetchArchives, Download.GoogleSheetsDownloader>();
             services.AddTransient<Parse.IParseArchives, Parse.GoogleSheetsParser>();
-            services.AddTransient<Store.ISaveReviews, Store.Inserter>();
+
+            services.AddTransient<CosmosClient>(services =>
+            {
+                Store.Configuration config = services.GetService<Store.Configuration>();
+                return new CosmosClient(config.ConnectionString);
+            });
+
+            services.AddTransient<Store.ISaveReviews, Store.LoggingInserter>(services =>
+            {
+                var logger = services.GetService<ILogger<Store.CosmosDbInserter>>();
+                var cosmos = services.GetService<CosmosClient>();
+                Store.ISaveReviews innerStore = new Store.CosmosDbInserter(logger, cosmos, "bot-db");
+                return new Store.LoggingInserter(logger, innerStore);
+            });
 
             services.AddLogging();
         }
