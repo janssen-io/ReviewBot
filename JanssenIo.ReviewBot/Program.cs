@@ -1,8 +1,4 @@
-﻿using JanssenIo.ReviewBot.ArchiveParser;
-using JanssenIo.ReviewBot.CommandHandlers;
-using LiteDB;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -59,9 +55,9 @@ namespace JanssenIo.ReviewBot
 
         static void ConfigureServices(HostBuilderContext context, IServiceCollection services)
         {
-            services.AddReviewBot(context);
+            services.AddReviewBot();
+            services.AddHostedService<ReviewBot.Service>();
             services.AddLogging();
         }
-
     }
 }

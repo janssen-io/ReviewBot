@@ -1,6 +1,4 @@
-﻿using JanssenIo.ReviewBot.ArchiveParser;
-using Microsoft.Azure.Cosmos;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -22,7 +20,7 @@ namespace JanssenIo.ReviewBot.CommandHandlers
 
             var mostRecentReviews = this.reviews
                 .Where(review => review.Author != null
-                   && review.Author.ToLower() == author.ToLower());
+                   && review.Author.ToLower() == author.ToLower(), author);
 
             var text = new StringBuilder($"{author}'s latest reviews:");
             text.AppendLine();

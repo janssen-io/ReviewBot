@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace JanssenIo.ReviewBot
 {
-    internal static class ReviewBot
+    public static class ReviewBot
     {
         public static readonly EventId UnexpectedErrorId = new EventId(5000, "Unexpected Bot Error");
         public static readonly EventId NoCommandId = new EventId(5001, "Message Without Command");
@@ -76,7 +76,7 @@ namespace JanssenIo.ReviewBot
             }
         }
 
-        internal class InboxReplier
+        public class InboxReplier
         {
             private readonly RedditClient reddit;
             private readonly ILogger<InboxReplier> logger;
@@ -95,6 +95,7 @@ namespace JanssenIo.ReviewBot
 
             public void ReadMessages()
             {
+                var x = reddit.Account.GetMe();
                 foreach(var message in reddit.Account.Messages.Unread)
                 {
                     try

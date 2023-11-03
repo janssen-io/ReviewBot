@@ -1,14 +1,13 @@
 ﻿using JanssenIo.ReviewBot.ArchiveParser;
 using Microsoft.Azure.Cosmos;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace JanssenIo.ReviewBot
 {
     public interface IQueryReviews
     {
-        Review[] Where(Func<Review, bool> filter);
+        Review[] Where(Func<Review, bool> filter, string author);
     }
 
     public class Latest10Query : IQueryReviews
@@ -20,8 +19,8 @@ namespace JanssenIo.ReviewBot
             this.innerQuery = innerQuery;
         }
 
-        public Review[] Where(Func<Review, bool> filter)
-            => innerQuery.Where(filter)
+        public Review[] Where(Func<Review, bool> filter, string author)
+            => innerQuery.Where(filter, author)
                 .OrderByDescending(r => r.PublishedOn)
                 .Take(10)
                 .ToArray();
@@ -36,10 +35,12 @@ namespace JanssenIo.ReviewBot
             this.reviews = container;
         }
 
-        public Review[] Where(Func<Review, bool> filter)
+        public Review[] Where(Func<Review, bool> filter, string author)
             => this.reviews
-                .GetItemLinqQueryable<Review>()
+                .GetItemLinqQueryable<Review>(allowSynchronousQueryExecution: true, requestOptions: new QueryRequestOptions() { PartitionKey = new PartitionKey(author) })
                 .Where(filter)
+                .OrderByDescending(r => r.PublishedOn)
+                .Take(10)
                 .ToArray();
             
     }

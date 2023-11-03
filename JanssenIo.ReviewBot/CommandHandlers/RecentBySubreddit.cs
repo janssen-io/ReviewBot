@@ -32,7 +32,7 @@ namespace JanssenIo.ReviewBot.CommandHandlers
                 var mostRecentReviews = this.reviews
                     .Where(review => review.Author != null && review.Link != null
                        && review.Author.ToLower() == author.ToLower()
-                       && review.Link.ToLower().Contains(subreddit.ToLower()));
+                       && review.Link.ToLower().Contains(subreddit.ToLower()), author);
 
                 var text = new StringBuilder($"{author}'s latest reviews in {subreddit}:");
                 text.AppendLine();

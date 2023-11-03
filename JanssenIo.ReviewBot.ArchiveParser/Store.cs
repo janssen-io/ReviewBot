@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace JanssenIo.ReviewBot.ArchiveParser
 {
-    internal static class Store
+    public static class Store
     {
         private static readonly EventId DuplicateReviewId = new EventId(3001, "Duplicate Review");
         private static readonly EventId UnexpectedErrorId = new EventId(3002, "Unexpected Error");
@@ -21,13 +21,13 @@ namespace JanssenIo.ReviewBot.ArchiveParser
             public string? ConnectionString { get; set; }
         }
 
-        internal interface ISaveReviews
+        public interface ISaveReviews
         {
             public Task Save(Review review);
             public Task SaveMany(IEnumerable<Review> reviews);
         }
 
-        internal class LoggingInserter : ISaveReviews
+        public class LoggingInserter : ISaveReviews
         {
             private readonly ILogger<ISaveReviews> logger;
             private readonly ISaveReviews store;
@@ -49,6 +49,7 @@ namespace JanssenIo.ReviewBot.ArchiveParser
                 {
                     try
                     {
+                        review.PublishedOn ??= review.SubmittedOn;
                         await Save(review);
                         numNew++;
                     }

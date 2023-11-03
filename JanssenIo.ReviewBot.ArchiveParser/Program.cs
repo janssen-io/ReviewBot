@@ -58,40 +58,8 @@ namespace JanssenIo.ReviewBot.ArchiveParser
         static void ConfigureServices(HostBuilderContext context, IServiceCollection services)
         {
             services.AddHostedService<Worker>();
-            services.AddHttpClient();
-
-            services.BindConfiguration<Download.Configuration>(context, nameof(Download));
-            services.BindConfiguration<Store.Configuration>(context, nameof(Store));
-
-            services.AddTransient<Download.IFetchArchives, Download.GoogleSheetsDownloader>();
-            services.AddTransient<Parse.IParseArchives, Parse.GoogleSheetsParser>();
-
-            services.AddTransient<CosmosClient>(services =>
-            {
-                Store.Configuration config = services.GetService<Store.Configuration>();
-                return new CosmosClient(config.ConnectionString);
-            });
-
-            services.AddTransient<Store.ISaveReviews, Store.LoggingInserter>(services =>
-            {
-                var logger = services.GetService<ILogger<Store.CosmosDbInserter>>();
-                var cosmos = services.GetService<CosmosClient>();
-                Store.ISaveReviews innerStore = new Store.CosmosDbInserter(logger, cosmos, "bot-db");
-                return new Store.LoggingInserter(logger, innerStore);
-            });
-
+            services.AddArchiveParser();
             services.AddLogging();
-        }
-
-        static void BindConfiguration<T>(this IServiceCollection services, HostBuilderContext host, string section)
-            where T : class, new()
-        {
-            var config = new T();
-            host.Configuration
-                .GetSection(section)
-                .Bind(config);
-
-            services.AddSingleton(config);
         }
     }
 }

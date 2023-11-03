@@ -14,7 +14,7 @@ namespace JanssenIo.ReviewBot.Tests
             this.reviews = reviews;
         }
 
-        public Review[] Where(Func<Review, bool> filter)
+        public Review[] Where(Func<Review, bool> filter, string author)
         {
             return reviews.Where(filter).ToArray();
         }

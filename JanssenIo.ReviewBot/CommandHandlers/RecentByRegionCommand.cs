@@ -29,7 +29,7 @@ namespace JanssenIo.ReviewBot.CommandHandlers
                 var mostRecentReviews = this.reviews
                     .Where(review => review.Author != null && review.Region != null
                        && review.Author.ToLower() == author.ToLower()
-                       && review.Region.ToLower().Contains(region.ToLower()));
+                       && review.Region.ToLower().Contains(region.ToLower()), author);
 
                 var text = new StringBuilder($"{author}'s latest '{region}' reviews:");
                 text.AppendLine();
