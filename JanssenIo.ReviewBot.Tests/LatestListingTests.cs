@@ -1,11 +1,10 @@
 ﻿using JanssenIo.ReviewBot.ArchiveParser;
-using JanssenIo.ReviewBot.CommandHandlers;
+using JanssenIo.ReviewBot.Replies;
+using JanssenIo.ReviewBot.Replies.CommandHandlers;
 using LiteDB;
-using Microsoft.Azure.Cosmos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace JanssenIo.ReviewBot.Tests

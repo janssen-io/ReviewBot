@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging.Console;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace JanssenIo.ReviewBot
+namespace JanssenIo.ReviewBot.Replies
 {
     static class Program
     {
@@ -15,7 +15,8 @@ namespace JanssenIo.ReviewBot
             var host = Host
                 .CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration(ConfigureAppConfig)
-                .ConfigureLogging((host, logger) => {
+                .ConfigureLogging((host, logger) =>
+                {
                     logger.ClearProviders();
 
                     var key = host.Configuration.GetValue<string>("ApplicationInsights:ConnectionString");

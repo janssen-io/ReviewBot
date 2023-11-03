@@ -1,5 +1,4 @@
-﻿using JanssenIo.ReviewBot.CommandHandlers;
-using LiteDB;
+﻿using JanssenIo.ReviewBot.Replies.CommandHandlers;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Reddit;
@@ -11,7 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace JanssenIo.ReviewBot
+namespace JanssenIo.ReviewBot.Replies
 {
     public static class ReviewBot
     {
@@ -82,7 +81,7 @@ namespace JanssenIo.ReviewBot
             private readonly ILogger<InboxReplier> logger;
             private readonly IEnumerable<IReplyToCommands> repliers;
 
-            public InboxReplier (
+            public InboxReplier(
                 RedditClient reddit,
                 ILogger<InboxReplier> logger,
                 IEnumerable<IReplyToCommands> repliers
@@ -91,19 +90,18 @@ namespace JanssenIo.ReviewBot
                 this.reddit = reddit;
                 this.logger = logger;
                 this.repliers = repliers;
-            } 
+            }
 
             public void ReadMessages()
             {
-                var x = reddit.Account.GetMe();
-                foreach(var message in reddit.Account.Messages.Unread)
+                foreach (var message in reddit.Account.Messages.Unread)
                 {
                     try
                     {
                         HandleMessage(message);
                         reddit.Account.Messages.ReadMessage(message.Name);
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         logger.LogCritical(UnexpectedErrorId, e, e.Message);
                     }

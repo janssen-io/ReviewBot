@@ -3,7 +3,7 @@ using Microsoft.Azure.Cosmos;
 using System;
 using System.Linq;
 
-namespace JanssenIo.ReviewBot
+namespace JanssenIo.ReviewBot.Replies
 {
     public interface IQueryReviews
     {
@@ -32,16 +32,16 @@ namespace JanssenIo.ReviewBot
 
         public CosmosQueryAdapter(Container container)
         {
-            this.reviews = container;
+            reviews = container;
         }
 
         public Review[] Where(Func<Review, bool> filter, string author)
-            => this.reviews
+            => reviews
                 .GetItemLinqQueryable<Review>(allowSynchronousQueryExecution: true, requestOptions: new QueryRequestOptions() { PartitionKey = new PartitionKey(author) })
                 .Where(filter)
                 .OrderByDescending(r => r.PublishedOn)
                 .Take(10)
                 .ToArray();
-            
+
     }
 }

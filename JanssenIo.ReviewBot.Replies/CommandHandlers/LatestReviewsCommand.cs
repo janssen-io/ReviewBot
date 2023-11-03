@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using JanssenIo.ReviewBot.Replies;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace JanssenIo.ReviewBot.CommandHandlers
+namespace JanssenIo.ReviewBot.Replies.CommandHandlers
 {
     public class LatestReviewsHandler : IReplyToCommands
     {
@@ -18,7 +19,7 @@ namespace JanssenIo.ReviewBot.CommandHandlers
             if (!body.Contains("u/review_bot latest", System.StringComparison.OrdinalIgnoreCase))
                 return Enumerable.Empty<string>();
 
-            var mostRecentReviews = this.reviews
+            var mostRecentReviews = reviews
                 .Where(review => review.Author != null
                    && review.Author.ToLower() == author.ToLower(), author);
 

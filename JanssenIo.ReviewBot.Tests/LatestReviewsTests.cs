@@ -1,4 +1,4 @@
-﻿using JanssenIo.ReviewBot.CommandHandlers;
+﻿using JanssenIo.ReviewBot.Replies.CommandHandlers;
 using Xunit;
 
 namespace JanssenIo.ReviewBot.Tests

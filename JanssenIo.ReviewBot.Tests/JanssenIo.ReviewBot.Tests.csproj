@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\JanssenIo.ReviewBot.ArchiveParser\JanssenIo.ReviewBot.ArchiveParser.csproj" />
-    <ProjectReference Include="..\JanssenIo.ReviewBot\JanssenIo.ReviewBot.csproj" />
+    <ProjectReference Include="..\JanssenIo.ReviewBot.Replies\JanssenIo.ReviewBot.Replies.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,10 +2,10 @@
 using JanssenIo.ReviewBot.ArchiveParser;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.Azure.Cosmos;
 using JanssenIo.ReviewBot.Core;
+using JanssenIo.ReviewBot.Replies;
 
 [assembly: FunctionsStartup(typeof(JanssenIo.ReviewBot.Azure.Startup))]
 namespace JanssenIo.ReviewBot.Azure;

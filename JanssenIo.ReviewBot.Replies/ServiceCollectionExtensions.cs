@@ -1,14 +1,13 @@
-﻿using JanssenIo.ReviewBot.CommandHandlers;
-using Microsoft.Azure.Cosmos;
+﻿using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
 using Reddit;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using JanssenIo.ReviewBot.ArchiveParser;
 using Microsoft.Extensions.Options;
+using JanssenIo.ReviewBot.Replies.CommandHandlers;
 
-namespace JanssenIo.ReviewBot
+namespace JanssenIo.ReviewBot.Replies
 {
     public static class ServiceCollectionExtensions
     {

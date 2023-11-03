@@ -1,11 +1,8 @@
-﻿using JanssenIo.ReviewBot.ArchiveParser;
-using Microsoft.Azure.Cosmos;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace JanssenIo.ReviewBot.CommandHandlers
+namespace JanssenIo.ReviewBot.Replies.CommandHandlers
 {
     public class RecentByRegionHandler : IReplyToCommands
     {
@@ -23,10 +20,10 @@ namespace JanssenIo.ReviewBot.CommandHandlers
             if (matches.Count == 0)
                 yield break;
 
-            foreach(Match match in matches)
+            foreach (Match match in matches)
             {
                 var region = match.Groups[2].Value;
-                var mostRecentReviews = this.reviews
+                var mostRecentReviews = reviews
                     .Where(review => review.Author != null && review.Region != null
                        && review.Author.ToLower() == author.ToLower()
                        && review.Region.ToLower().Contains(region.ToLower()), author);
