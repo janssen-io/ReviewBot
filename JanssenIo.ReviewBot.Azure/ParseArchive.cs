@@ -3,13 +3,13 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using JanssenIo.ReviewBot.ArchiveParser;
 using System.Linq;
 using JanssenIo.ReviewBot.Core;
 using System.Web.Http;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Azure.WebJobs.Extensions.Http;
 
 namespace JanssenIo.ReviewBot.Azure
 {
@@ -35,12 +35,13 @@ namespace JanssenIo.ReviewBot.Azure
             this.runtimeConfig = runtimeConfig;
         }
 
+        const string dailyAtSix = "0 0 6 * * *";
+
         [FunctionName(nameof(ParseArchive))]
-        public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
+        public async Task Run(
+            [TimerTrigger(dailyAtSix)] TimerInfo timer,
             ILogger log)
         {
-
             try
             {
                 using Stream archive = await downloader.Download();
@@ -55,10 +56,7 @@ namespace JanssenIo.ReviewBot.Azure
             catch (Exception e)
             {
                 logger.LogCritical(new EventId(0), e, "Unexpected failure");
-                return new InternalServerErrorResult();
             }
-
-            return new NoContentResult();
         }
 
         private Task UpdateLastRun(DateTime lastRunDate)
