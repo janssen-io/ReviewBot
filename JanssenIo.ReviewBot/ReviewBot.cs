@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace JanssenIo.ReviewBot
 {
-    internal static class ReviewBot
+    public static class ReviewBot
     {
         public static readonly EventId UnexpectedErrorId = new EventId(5000, "Unexpected Bot Error");
         public static readonly EventId NoCommandId = new EventId(5001, "Message Without Command");
@@ -31,23 +31,17 @@ namespace JanssenIo.ReviewBot
         {
             private readonly IHostApplicationLifetime appLifeTime;
             private readonly ILogger<Service> logger;
-            private readonly ILogger<InboxReplier> inboxLogger;
-            private readonly IEnumerable<IReplyToCommands> repliers;
-            private readonly Configuration config;
+            private readonly InboxReplier inbox;
 
             public Service(
                 IHostApplicationLifetime appLifeTime,
                 ILogger<Service> logger,
-                ILogger<InboxReplier> inboxLogger,
-                IEnumerable<IReplyToCommands> repliers,
-                Configuration config
+                InboxReplier inbox
                 )
             {
                 this.appLifeTime = appLifeTime;
                 this.logger = logger;
-                this.inboxLogger = inboxLogger;
-                this.repliers = repliers;
-                this.config = config;
+                this.inbox = inbox;
             }
 
             public Task StartAsync(CancellationToken cancellationToken)
@@ -56,16 +50,9 @@ namespace JanssenIo.ReviewBot
                 {
                     Task.Run(() =>
                     {
-                        RedditClient? reddit = null;
                         try
                         {
-                            reddit = new RedditClient(
-                                appId: config.AppId,
-                                refreshToken: config.RefreshToken,
-                                appSecret: config.AppSecret);
-
-                            new InboxReplier(reddit, inboxLogger, repliers)
-                                .ReadMessages();
+                            inbox.ReadMessages();
                         }
                         catch (Exception e)
                         {
@@ -89,7 +76,7 @@ namespace JanssenIo.ReviewBot
             }
         }
 
-        internal class InboxReplier
+        public class InboxReplier
         {
             private readonly RedditClient reddit;
             private readonly ILogger<InboxReplier> logger;
@@ -108,6 +95,7 @@ namespace JanssenIo.ReviewBot
 
             public void ReadMessages()
             {
+                var x = reddit.Account.GetMe();
                 foreach(var message in reddit.Account.Messages.Unread)
                 {
                     try

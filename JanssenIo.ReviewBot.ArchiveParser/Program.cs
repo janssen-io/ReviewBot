@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -19,10 +20,12 @@ namespace JanssenIo.ReviewBot.ArchiveParser
                 .ConfigureLogging((host, logger) => {
                     logger.ClearProviders();
 
-                    var key = host.Configuration.GetValue<string>("ApplicationInsights:InstrumentationKey");
+                    var key = host.Configuration.GetValue<string>("ApplicationInsights:ConnectionString");
 
                     logger
-                        .AddApplicationInsights(key);
+                        .AddApplicationInsights(
+                            configureTelemetryConfiguration: a => a.ConnectionString = key,
+                            configureApplicationInsightsLoggerOptions: _ => { });
 
 #pragma warning disable S3358 // Ternary operators should not be nested
                     var consoleLevel
@@ -47,35 +50,16 @@ namespace JanssenIo.ReviewBot.ArchiveParser
         static void ConfigureAppConfig(IConfigurationBuilder config)
         {
             config
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile("secrets.json", optional: false, reloadOnChange: true)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile("secrets.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables();
         }
 
         static void ConfigureServices(HostBuilderContext context, IServiceCollection services)
         {
             services.AddHostedService<Worker>();
-            services.AddHttpClient();
-
-            services.BindConfiguration<Download.Configuration>(context, nameof(Download));
-            services.BindConfiguration<Store.Configuration>(context, nameof(Store));
-
-            services.AddTransient<Download.IFetchArchives, Download.GoogleSheetsDownloader>();
-            services.AddTransient<Parse.IParseArchives, Parse.GoogleSheetsParser>();
-            services.AddTransient<Store.ISaveReviews, Store.Inserter>();
-
+            services.AddArchiveParser();
             services.AddLogging();
-        }
-
-        static void BindConfiguration<T>(this IServiceCollection services, HostBuilderContext host, string section)
-            where T : class, new()
-        {
-            var config = new T();
-            host.Configuration
-                .GetSection(section)
-                .Bind(config);
-
-            services.AddSingleton(config);
         }
     }
 }

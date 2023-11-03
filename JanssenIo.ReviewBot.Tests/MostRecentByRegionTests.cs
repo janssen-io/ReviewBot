@@ -28,8 +28,8 @@ namespace JanssenIo.ReviewBot.Tests
                 Region = "Highlands",
             };
 
-            this.reviews.Insert(myReview);
-            this.reviews.Insert(otherReview);
+            this.database.Add(myReview);
+            this.database.Add(otherReview);
 
             // Act
             var replies = this.sut.ReplyTo(myReview.Author, Command);
