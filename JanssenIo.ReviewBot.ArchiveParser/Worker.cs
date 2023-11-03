@@ -38,13 +38,11 @@ namespace JanssenIo.ReviewBot.ArchiveParser
             {
                 Task.Run(async () =>
                 {
-                    string? location = null;
                     try
                     {
-                        location = await downloader.Download();
+                        using Stream archive = await downloader.Download();
 
-                        using var reader = new FileStream(location, FileMode.Open);
-                        var reviews = parser.Parse(reader).ToArray();
+                        var reviews = parser.Parse(archive).ToArray();
 
                         await inserter.SaveMany(reviews);
 
@@ -57,10 +55,6 @@ namespace JanssenIo.ReviewBot.ArchiveParser
                     }
                     finally
                     {
-                        if (location != null && File.Exists(location))
-                        {
-                            File.Delete(location);
-                        }
                         appLifeTime.StopApplication();
                     }
                 });

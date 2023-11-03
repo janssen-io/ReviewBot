@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using JanssenIo.ReviewBot.ArchiveParser;
 using System.Linq;
 using JanssenIo.ReviewBot.Core;
+using System.Web.Http;
 
 namespace JanssenIo.ReviewBot.Azure
 {
@@ -40,15 +41,11 @@ namespace JanssenIo.ReviewBot.Azure
             ILogger log)
         {
 
-            await UpdateLastRun(new DateTime(1970, 10, 23, 0, 0, 0, DateTimeKind.Utc));
-
-            string? location = null;
             try
             {
-                location = await downloader.Download();
+                using Stream archive = await downloader.Download();
 
-                using var reader = new FileStream(location, FileMode.Open);
-                var reviews = parser.Parse(reader).ToArray();
+                var reviews = parser.Parse(archive).ToArray();
 
                 await inserter.SaveMany(reviews);
 
@@ -58,13 +55,7 @@ namespace JanssenIo.ReviewBot.Azure
             catch (Exception e)
             {
                 logger.LogCritical(new EventId(0), e, "Unexpected failure");
-            }
-            finally
-            {
-                if (location != null && File.Exists(location))
-                {
-                    //File.Delete(location);
-                }
+                return new InternalServerErrorResult();
             }
 
             return new NoContentResult();

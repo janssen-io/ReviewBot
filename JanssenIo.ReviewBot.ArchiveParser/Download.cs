@@ -22,7 +22,7 @@ namespace JanssenIo.ReviewBot.ArchiveParser
 
         public interface IFetchArchives
         {
-            Task<string> Download();
+            Task<Stream> Download();
         }
 
         public class GoogleSheetsDownloader : IFetchArchives
@@ -38,19 +38,13 @@ namespace JanssenIo.ReviewBot.ArchiveParser
                 this.runtimeConfig = runtimeConfig;
             }
 
-            public async Task<string> Download()
+            public async Task<Stream> Download()
             {
-                string saveTo = GetSaveLocation();
                 Uri archiveUri = await GetArchiveUri();
 
                 var response = await httpClient.GetAsync(archiveUri);
                 response.EnsureSuccessStatusCode();
-                var csv = await response.Content.ReadAsStringAsync();
-
-                using var writer = new StreamWriter(saveTo, append: false);
-                await writer.WriteAsync(csv);
-
-                return saveTo;
+                return await response.Content.ReadAsStreamAsync();
             }
 
             private async Task<Uri> GetArchiveUri()
