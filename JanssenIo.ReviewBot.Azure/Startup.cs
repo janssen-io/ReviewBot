@@ -33,7 +33,6 @@ public class Startup : FunctionsStartup
                 c =>
                 {
                     var aiConfig = builder.Services.BuildServiceProvider().GetService<IOptions<AppInsightsConfig>>();
-                    var config = builder.GetContext().Configuration;
                     c.ConnectionString = aiConfig.Value.ConnectionString;
                 },
                 _ => { });
