@@ -1,14 +1,12 @@
-﻿using Microsoft.Azure.Cosmos;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using System;
 
 namespace JanssenIo.ReviewBot.ArchiveParser;
 
 public static class ServiceCollectionExtensions
 {
-    public static void AddArchiveParser(this IServiceCollection services)
+    public static void AddArchiveParser(this IServiceCollection services, Action<IServiceCollection> registerReviewStore)
     {
         services.AddHttpClient();
         services.BindConfiguration<Download.Configuration>(nameof(Download));
@@ -17,19 +15,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<Download.IFetchArchives, Download.GoogleSheetsDownloader>();
         services.AddTransient<Parse.IParseArchives, Parse.GoogleSheetsParser>();
 
-        services.AddTransient<CosmosClient>(services =>
-        {
-            IOptions<Store.Configuration> config = services.GetService<IOptions<Store.Configuration>>()!;
-            return new CosmosClient(config.Value.ConnectionString);
-        });
-
-        services.AddTransient<Store.ISaveReviews, Store.LoggingInserter>(services =>
-        {
-            var logger = services.GetService<ILogger<Store.CosmosDbInserter>>()!;
-            var cosmos = services.GetService<CosmosClient>()!;
-            Store.ISaveReviews innerStore = new Store.CosmosDbInserter(logger, cosmos, "bot-db");
-            return new Store.LoggingInserter(logger, innerStore);
-        });
+        registerReviewStore(services);
 
         services.AddLogging();
     }

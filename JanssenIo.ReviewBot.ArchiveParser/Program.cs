@@ -1,9 +1,7 @@
-﻿using Microsoft.Azure.Cosmos;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.Extensions.Logging.Console;
 using System.Linq;
 using System.Threading.Tasks;
@@ -58,7 +56,10 @@ namespace JanssenIo.ReviewBot.ArchiveParser
         static void ConfigureServices(HostBuilderContext context, IServiceCollection services)
         {
             services.AddHostedService<Worker>();
-            services.AddArchiveParser();
+            services.AddArchiveParser(services =>
+            {
+                services.AddTransient<Store.ISaveReviews, Store.LiteDbInserter>();
+            });
             services.AddLogging();
         }
     }

@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using JanssenIo.ReviewBot.ArchiveParser;
+using LiteDB;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -56,7 +58,18 @@ namespace JanssenIo.ReviewBot.Replies
 
         static void ConfigureServices(HostBuilderContext context, IServiceCollection services)
         {
-            services.AddReviewBot();
+            services.AddReviewBot(services =>
+            {
+                services.AddScoped<ILiteCollection<Review>>(
+                    container =>
+                    {
+                        var options = container.GetService<StoreConfiguration>();
+                        var db = new LiteDatabase(options!.ConnectionString);
+                        return db.GetCollection<Review>("reviews");
+                    });
+
+
+            });
             services.AddHostedService<ReviewBot.Service>();
             services.AddLogging();
         }

@@ -1,13 +1,14 @@
 ﻿using JanssenIo.ReviewBot.ArchiveParser;
-using Microsoft.Azure.Cosmos;
+using LiteDB;
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace JanssenIo.ReviewBot.Replies
 {
     public interface IQueryReviews
     {
-        Review[] Where(Func<Review, bool> filter, string author);
+        Review[] Where(Expression<Func<Review, bool>> filter, string author);
     }
 
     public class Latest10Query : IQueryReviews
@@ -19,29 +20,25 @@ namespace JanssenIo.ReviewBot.Replies
             this.innerQuery = innerQuery;
         }
 
-        public Review[] Where(Func<Review, bool> filter, string author)
+        public Review[] Where(Expression<Func<Review, bool>> filter, string author)
             => innerQuery.Where(filter, author)
                 .OrderByDescending(r => r.PublishedOn)
                 .Take(10)
                 .ToArray();
     }
 
-    public class CosmosQueryAdapter : IQueryReviews
+    public class LiteDbQueryAdapter : IQueryReviews
     {
-        private readonly Container reviews;
+        private readonly ILiteCollection<Review> reviews;
 
-        public CosmosQueryAdapter(Container container)
+        public LiteDbQueryAdapter(ILiteCollection<Review> reviews)
         {
-            reviews = container;
+            this.reviews = reviews;
         }
 
-        public Review[] Where(Func<Review, bool> filter, string author)
-            => reviews
-                .GetItemLinqQueryable<Review>(allowSynchronousQueryExecution: true, requestOptions: new QueryRequestOptions() { PartitionKey = new PartitionKey(author) })
-                .Where(filter)
-                .OrderByDescending(r => r.PublishedOn)
-                .Take(10)
-                .ToArray();
-
+        public Review[] Where(Expression<Func<Review, bool>> filter, string author)
+        {
+            return reviews.Query().Where(filter).ToArray();
+        }
     }
 }

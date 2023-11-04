@@ -1,17 +1,17 @@
-﻿using Microsoft.Azure.Cosmos;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Reddit;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using JanssenIo.ReviewBot.ArchiveParser;
 using Microsoft.Extensions.Options;
 using JanssenIo.ReviewBot.Replies.CommandHandlers;
+using System;
 
 namespace JanssenIo.ReviewBot.Replies
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddReviewBot(this IServiceCollection services)
+        public static void AddReviewBot(this IServiceCollection services, Action<IServiceCollection> registerIQueryReviews)
         {
             services.AddHttpClient();
 
@@ -42,14 +42,7 @@ namespace JanssenIo.ReviewBot.Replies
                 return new ReviewBot.InboxReplier(reddit, inboxLogger, repliers);
             });
 
-            // TODO: move to Azure-project
-            services.AddScoped<IQueryReviews, Latest10Query>(services =>
-            {
-                var options = services.GetService<IOptions<StoreConfiguration>>()!;
-                var db = new CosmosClient(options.Value.ConnectionString).GetDatabase("bot-db");
-                var container = db.GetContainer("whiskyreviews");
-                return new Latest10Query(new CosmosQueryAdapter(container));
-            });
+            registerIQueryReviews(services);
         }
     }
 }
