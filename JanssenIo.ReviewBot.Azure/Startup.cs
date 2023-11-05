@@ -19,6 +19,7 @@ public class Startup : FunctionsStartup
     {
         builder.Services.AddArchiveParser(services =>
         {
+            services.BindConfiguration<StoreConfiguration>("Store");
             services.AddTransient<CosmosClient>(services =>
             {
                 IOptions<StoreConfiguration> config =  services.GetService<IOptions<StoreConfiguration>>()!;

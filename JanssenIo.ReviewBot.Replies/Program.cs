@@ -51,7 +51,7 @@ namespace JanssenIo.ReviewBot.Replies
         static void ConfigureAppConfig(IConfigurationBuilder config)
         {
             config
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile("local.appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile("secrets.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables();
         }
