@@ -1,8 +1,8 @@
 ﻿using System.Text;
 
-namespace JanssenIo.ReviewBot.CommandHandlers
+namespace JanssenIo.ReviewBot.Replies.CommandHandlers
 {
-    public abstract class Reply 
+    public abstract class Reply
     {
         public abstract StringBuilder AddTo(StringBuilder reply);
     }

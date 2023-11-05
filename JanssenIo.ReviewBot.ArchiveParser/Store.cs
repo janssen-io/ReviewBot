@@ -1,11 +1,9 @@
 ﻿using LiteDB;
-using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace JanssenIo.ReviewBot.ArchiveParser
@@ -25,6 +23,21 @@ namespace JanssenIo.ReviewBot.ArchiveParser
         {
             public Task Save(Review review);
             public Task SaveMany(IEnumerable<Review> reviews);
+        }
+
+        public class DuplicateReviewException : Exception
+        {
+            public DuplicateReviewException() : base()
+            {
+            }
+
+            public DuplicateReviewException(string? message) : base(message)
+            {
+            }
+
+            public DuplicateReviewException(string? message, Exception? innerException) : base(message, innerException)
+            {
+            }
         }
 
         public class LoggingInserter : ISaveReviews
@@ -53,12 +66,8 @@ namespace JanssenIo.ReviewBot.ArchiveParser
                         await Save(review);
                         numNew++;
                     }
-                    catch (LiteException e) when (e.ErrorCode == LiteException.INDEX_DUPLICATE_KEY)
-                    {
-                        logger.LogWarning(DuplicateReviewId, "Duplicate: {Author}, {Bottle}, {Link}", review.Author, review.Bottle, review.Link);
-                        numDup++;
-                    }
-                    catch (CosmosException e) when (e.StatusCode == HttpStatusCode.Conflict)
+                    catch (DuplicateReviewException e) 
+                    // when (e.ErrorCode == LiteException.INDEX_DUPLICATE_KEY)
                     {
                         logger.LogWarning(DuplicateReviewId, "Duplicate: {Author}, {Bottle}, {Link}", review.Author, review.Bottle, review.Link);
                         numDup++;
@@ -99,37 +108,5 @@ namespace JanssenIo.ReviewBot.ArchiveParser
             }
         }
 
-        internal class CosmosDbInserter : ISaveReviews
-        {
-            private readonly Container container;
-            private readonly ILogger<CosmosDbInserter> logger;
-
-            public CosmosDbInserter(ILogger<CosmosDbInserter> logger, CosmosClient cosmos, string databaseId)
-            {
-                this.container = cosmos.GetDatabase(databaseId).GetContainer("whiskyreviews");
-                this.logger = logger;
-            }
-
-            public async Task Save(Review review)
-            {
-                try
-                {
-                    await SaveAsync(review);
-                }
-                catch(CosmosException e)
-                    when (e.StatusCode == HttpStatusCode.TooManyRequests)
-                {
-                    logger.LogInformation("Received HTTP 429, backing off for 5 seconds");
-                    await Task.Delay(TimeSpan.FromSeconds(5));
-                    await Save(review);
-                }
-            }
-
-            public Task SaveMany(IEnumerable<Review> reviews)
-                => Task.WhenAll(reviews.Select(Save));
-
-            private Task<ItemResponse<Review>> SaveAsync(Review review)
-                => container.CreateItemAsync(review);
-        }
     }
 }

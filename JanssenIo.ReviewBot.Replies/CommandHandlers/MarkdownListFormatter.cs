@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace JanssenIo.ReviewBot.CommandHandlers
+namespace JanssenIo.ReviewBot.Replies.CommandHandlers
 {
     internal static class MarkdownListFormatter
     {

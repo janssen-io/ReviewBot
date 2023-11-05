@@ -1,15 +1,11 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using JanssenIo.ReviewBot.ArchiveParser;
 using System.Linq;
 using JanssenIo.ReviewBot.Core;
-using System.Web.Http;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 
 namespace JanssenIo.ReviewBot.Azure
 {

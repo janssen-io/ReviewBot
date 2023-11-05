@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace JanssenIo.ReviewBot.CommandHandlers
+namespace JanssenIo.ReviewBot.Replies.CommandHandlers
 {
     public interface IReplyToCommands
     {

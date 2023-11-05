@@ -1,11 +1,8 @@
-﻿using JanssenIo.ReviewBot.ArchiveParser;
-using Microsoft.Azure.Cosmos;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Text;
 
-namespace JanssenIo.ReviewBot.CommandHandlers
+namespace JanssenIo.ReviewBot.Replies.CommandHandlers
 {
     public class RecentByBottleHandler : IReplyToCommands
     {
@@ -23,10 +20,10 @@ namespace JanssenIo.ReviewBot.CommandHandlers
             if (matches.Count == 0)
                 yield break;
 
-            foreach(Match match in matches)
+            foreach (Match match in matches)
             {
                 var bottle = match.Groups[2].Value;
-                var mostRecentReviews = this.reviews
+                var mostRecentReviews = reviews
                     .Where(review => review.Author != null && review.Bottle != null
                        && review.Author.ToLower() == author.ToLower()
                        && review.Bottle.ToLower().Contains(bottle.ToLower()), author);

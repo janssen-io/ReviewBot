@@ -1,4 +1,4 @@
-﻿namespace JanssenIo.ReviewBot
+﻿namespace JanssenIo.ReviewBot.Replies
 {
     internal class StoreConfiguration
     {

@@ -1,5 +1,5 @@
 ﻿using JanssenIo.ReviewBot.ArchiveParser;
-using JanssenIo.ReviewBot.CommandHandlers;
+using JanssenIo.ReviewBot.Replies.CommandHandlers;
 using LiteDB;
 using System.Linq;
 using Xunit;

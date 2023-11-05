@@ -1,16 +1,14 @@
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+using static JanssenIo.ReviewBot.Replies.ReviewBot;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 
 namespace JanssenIo.ReviewBot.Azure
 {
     public class Reply
     {
-        private readonly ReviewBot.InboxReplier inbox;
+        private readonly InboxReplier inbox;
 
-        public Reply(ReviewBot.InboxReplier inbox)
+        public Reply(InboxReplier inbox)
         {
             this.inbox = inbox;
         }
