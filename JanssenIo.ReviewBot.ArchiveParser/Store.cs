@@ -66,7 +66,7 @@ namespace JanssenIo.ReviewBot.ArchiveParser
                         await Save(review);
                         numNew++;
                     }
-                    catch (DuplicateReviewException e) 
+                    catch (DuplicateReviewException) 
                     // when (e.ErrorCode == LiteException.INDEX_DUPLICATE_KEY)
                     {
                         logger.LogWarning(DuplicateReviewId, "Duplicate: {Author}, {Bottle}, {Link}", review.Author, review.Bottle, review.Link);
