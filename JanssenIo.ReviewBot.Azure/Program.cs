@@ -11,7 +11,6 @@ using Microsoft.Extensions.Options;
 using StoreConfiguration = JanssenIo.ReviewBot.Azure.StoreConfiguration;
 
 var host = new HostBuilder()
-    .ConfigureFunctionsWorkerDefaults()
     .ConfigureServices(services =>
     {
         services.AddArchiveParser(services =>
@@ -63,6 +62,7 @@ var host = new HostBuilder()
                 _ => { });
         });
     })
+    .ConfigureFunctionsWorkerDefaults()
     .Build();
 
 await host.RunAsync();
