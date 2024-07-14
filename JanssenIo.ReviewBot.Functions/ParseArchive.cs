@@ -34,7 +34,7 @@ public class ParseArchive
     const string dailyAtSix = "0 0 6 * * *";
 
     [Function(nameof(ParseArchive))]
-    public async Task Run([TimerTrigger(dailyAtSix)] TimerInfo timer, ILogger log)
+    public async Task Run([TimerTrigger(dailyAtSix)] TimerInfo timer, ILogger<ParseArchive> log)
     {
         try
         {

@@ -12,7 +12,7 @@ namespace JanssenIo.ReviewBot.ArchiveParser
     internal class Worker : IHostedService
     {
         private readonly IHostApplicationLifetime appLifeTime;
-        private readonly ILogger logger;
+        private readonly ILogger<Worker> logger;
         private readonly Download.IFetchArchives downloader;
         private readonly Parse.IParseArchives parser;
         private readonly Store.ISaveReviews inserter;

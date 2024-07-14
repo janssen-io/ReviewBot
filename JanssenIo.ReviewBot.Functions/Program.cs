@@ -19,17 +19,17 @@ var host = new HostBuilder()
         services.ConfigureFunctionsApplicationInsights();
 
         // Configure ILogger
-        services.BindConfiguration<AppInsightsConfig>("ApplicationInsights");
-        services.AddLogging(l =>
-        {
-            l.AddApplicationInsights(
-            c =>
-            {
-                var aiConfig = services.BuildServiceProvider().GetService<IOptions<AppInsightsConfig>>()!.Value;
-                c.ConnectionString = aiConfig.ConnectionString;
-            },
-            _ => { });
-        });
+        //services.BindConfiguration<AppInsightsConfig>("ApplicationInsights");
+        //services.AddLogging(l =>
+        //{
+        //    l.AddApplicationInsights(
+        //    c =>
+        //    {
+        //        var aiConfig = services.BuildServiceProvider().GetService<IOptions<AppInsightsConfig>>()!.Value;
+        //        c.ConnectionString = aiConfig.ConnectionString;
+        //    },
+        //    _ => { });
+        //});
 
         // Bot run config from CosmosDB
         services.AddTransient<IStoreConfiguration, CosmosConfigurationStore>(services =>

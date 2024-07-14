@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TokenRetriever", "TokenRetr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JanssenIo.ReviewBot.Tests", "JanssenIo.ReviewBot.Tests\JanssenIo.ReviewBot.Tests.csproj", "{F152CCDE-C115-4207-BAC4-BCFC25C607BC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JanssenIo.ReviewBot.Azure", "JanssenIo.ReviewBot.Azure\JanssenIo.ReviewBot.Azure.csproj", "{6BCF68D1-3C73-4865-AC90-5D616DA8F3B8}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JanssenIo.ReviewBot.Core", "JanssenIo.ReviewBot.Core\JanssenIo.ReviewBot.Core.csproj", "{2C9D5B1F-459B-4B01-8F61-897F7E11A8AF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JanssenIo.ReviewBot.Functions", "JanssenIo.ReviewBot.Functions\JanssenIo.ReviewBot.Functions.csproj", "{063C9451-33B1-425A-A137-8720617A8E46}"
@@ -39,10 +37,6 @@ Global
 		{F152CCDE-C115-4207-BAC4-BCFC25C607BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F152CCDE-C115-4207-BAC4-BCFC25C607BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F152CCDE-C115-4207-BAC4-BCFC25C607BC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6BCF68D1-3C73-4865-AC90-5D616DA8F3B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6BCF68D1-3C73-4865-AC90-5D616DA8F3B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6BCF68D1-3C73-4865-AC90-5D616DA8F3B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6BCF68D1-3C73-4865-AC90-5D616DA8F3B8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2C9D5B1F-459B-4B01-8F61-897F7E11A8AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2C9D5B1F-459B-4B01-8F61-897F7E11A8AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C9D5B1F-459B-4B01-8F61-897F7E11A8AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
