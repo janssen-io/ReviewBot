@@ -1,5 +1,5 @@
 ﻿using JanssenIo.ReviewBot.ArchiveParser;
-using JanssenIo.ReviewBot.Azure;
+using JanssenIo.ReviewBot.Functions;
 using JanssenIo.ReviewBot.Core;
 using JanssenIo.ReviewBot.Replies;
 using Microsoft.Azure.Cosmos;
@@ -8,9 +8,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-using StoreConfiguration = JanssenIo.ReviewBot.Azure.StoreConfiguration;
+using StoreConfiguration = JanssenIo.ReviewBot.Functions.StoreConfiguration;
 
 var host = new HostBuilder()
+    .ConfigureFunctionsWebApplication()
     .ConfigureServices(services =>
     {
         services.AddArchiveParser(services =>
@@ -62,7 +63,6 @@ var host = new HostBuilder()
                 _ => { });
         });
     })
-    .ConfigureFunctionsWorkerDefaults()
     .Build();
 
 await host.RunAsync();
