@@ -15,7 +15,7 @@ env:
   RELEASE_DIR: "dist"
   INFRA_AS_CODE: "reviewbot.bicep"
   ARTIFACT: functions.zip
-  IS_MAIN: ${{ github.ref == 'refs/heads/main' }}
+  IS_MAIN: ${{ github.event.base_ref == 'refs/heads/main' }}
 
 jobs:
   deployment:
