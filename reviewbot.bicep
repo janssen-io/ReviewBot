@@ -118,12 +118,12 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
           value: packageUrl
         }
         {
-          name: 'ApplicationInsights__ConnectionString'
+          name: 'ApplicationInsights_Connection_String'
           value: appInsights.properties.ConnectionString
         }
         {
-          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          value: appInsights.properties.InstrumentationKey
+          name: 'ApplicationInsights__ConnectionString'
+          value: appInsights.properties.ConnectionString
         }
         {
           name: 'Logging__LogLevel__Default'

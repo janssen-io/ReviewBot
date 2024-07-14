@@ -82,7 +82,7 @@ jobs:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ vars.AZURE_RESOURCEGROUP_NAME }}
         template: ${{ ENV.INFRA_AS_CODE }}
-        parameters: "botId='${{ vars.BOT_CLIENT_ID }}' packageUrl='${{ env.PACKAGE_URL }}'"
+        parameters: "botId=${{ vars.BOT_CLIENT_ID }} packageUrl=${{ env.PACKAGE_URL }}"
         failOnStdErr: false
 
     - name: Validate Bicep files
@@ -91,7 +91,7 @@ jobs:
         az deployment group validate \
           --resource-group ${{ vars.AZURE_RESOURCEGROUP_NAME }} \
           --template-file $INFRA_AS_CODE \
-          --parameters botId='${{ vars.BOT_CLIENT_ID }}' packageUrl='${{ env.PACKAGE_URL }}'
+          --parameters botId=${{ vars.BOT_CLIENT_ID }} packageUrl=${{ env.PACKAGE_URL }}
 
     - name: What-if Bicep files
       if: ${{ env.IS_MAIN == 'false' }}
@@ -99,5 +99,5 @@ jobs:
         az deployment group what-if \
           --resource-group ${{ vars.AZURE_RESOURCEGROUP_NAME }} \
           --template-file $INFRA_AS_CODE \
-          --parameters botId='${{ vars.BOT_CLIENT_ID }}' packageUrl='${{ env.PACKAGE_URL }}'
+          --parameters botId=${{ vars.BOT_CLIENT_ID }} packageUrl=${{ env.PACKAGE_URL }}
 
