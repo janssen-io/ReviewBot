@@ -1,6 +1,6 @@
 using static JanssenIo.ReviewBot.Replies.ReviewBot;
-using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
+using Microsoft.Azure.Functions.Worker;
 
 namespace JanssenIo.ReviewBot.Azure
 {
@@ -15,10 +15,8 @@ namespace JanssenIo.ReviewBot.Azure
 
         const string everyFiveMinutes = "0 */5 * * * *";
 
-        [FunctionName("Reply")]
-        public void Run(
-            [TimerTrigger(everyFiveMinutes)] TimerInfo timer,
-            ILogger log)
+        [Function("Reply")]
+        public void Run([TimerTrigger(everyFiveMinutes)] TimerInfo timer, ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 

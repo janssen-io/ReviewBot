@@ -1,12 +1,13 @@
 ﻿using JanssenIo.ReviewBot.ArchiveParser;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.Azure.Cosmos;
+using JanssenIo.ReviewBot.Azure;
 using JanssenIo.ReviewBot.Core;
 using JanssenIo.ReviewBot.Replies;
+using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using JanssenIo.ReviewBot.Azure;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+
 using StoreConfiguration = JanssenIo.ReviewBot.Azure.StoreConfiguration;
 
 var host = new HostBuilder()

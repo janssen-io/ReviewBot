@@ -1,11 +1,11 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using JanssenIo.ReviewBot.ArchiveParser;
 using System.Linq;
 using JanssenIo.ReviewBot.Core;
+using Microsoft.Azure.Functions.Worker;
 
 namespace JanssenIo.ReviewBot.Azure
 {
@@ -33,10 +33,8 @@ namespace JanssenIo.ReviewBot.Azure
 
         const string dailyAtSix = "0 0 6 * * *";
 
-        [FunctionName(nameof(ParseArchive))]
-        public async Task Run(
-            [TimerTrigger(dailyAtSix)] TimerInfo timer,
-            ILogger log)
+        [Function(nameof(ParseArchive))]
+        public async Task Run([TimerTrigger(dailyAtSix)] TimerInfo timer, ILogger log)
         {
             try
             {
