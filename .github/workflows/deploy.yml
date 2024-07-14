@@ -82,7 +82,7 @@ jobs:
         az deployment group validate \
           --resource-group ${{ vars.AZURE_RESOURCEGROUP_NAME }} \
           --template-file $INFRA_AS_CODE
-          --parameters botId=${{ vars.BOT_CLIENT_ID }}
+          --parameters "botId=${{ vars.BOT_CLIENT_ID }}"
 
     - name: What-if Bicep files
       if: ${{ env.IS_MAIN == 'false' }}
@@ -90,5 +90,5 @@ jobs:
         az deployment group what-if \
           --resource-group ${{ vars.AZURE_RESOURCEGROUP_NAME }} \
           --template-file $INFRA_AS_CODE
-          --parameters botId=${{ vars.BOT_CLIENT_ID }}
+          --parameters "botId=${{ vars.BOT_CLIENT_ID }}"
 
