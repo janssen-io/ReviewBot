@@ -17,7 +17,7 @@ public class Reply
     const string everyFiveMinutes = "0 */5 * * * *";
 
     [Function("Reply")]
-    public void Run([TimerTrigger(everyFiveMinutes)] TimerInfo timer, ILogger log)
+    public void Run([TimerTrigger(everyFiveMinutes)] TimerInfo timer, ILogger<Reply> log)
     {
         log.LogInformation("C# HTTP trigger function processed a request.");
 
