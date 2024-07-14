@@ -1,28 +1,24 @@
-﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
-using JanssenIo.ReviewBot.ArchiveParser;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.Azure.Cosmos;
+﻿using JanssenIo.ReviewBot.ArchiveParser;
+using JanssenIo.ReviewBot.Azure;
 using JanssenIo.ReviewBot.Core;
 using JanssenIo.ReviewBot.Replies;
+using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
-[assembly: FunctionsStartup(typeof(JanssenIo.ReviewBot.Azure.Startup))]
-namespace JanssenIo.ReviewBot.Azure;
+using StoreConfiguration = JanssenIo.ReviewBot.Azure.StoreConfiguration;
 
-public class Startup : FunctionsStartup
-{
-    public class AppInsightsConfig { public string ConnectionString { get; set; } }
-    public class StoreConfiguration { public string ConnectionString { get; set; } }
-
-    public override void Configure(IFunctionsHostBuilder builder)
+var host = new HostBuilder()
+    .ConfigureServices(services =>
     {
-        builder.Services.AddArchiveParser(services =>
+        services.AddArchiveParser(services =>
         {
             services.BindConfiguration<StoreConfiguration>("Store");
             services.AddTransient<CosmosClient>(services =>
             {
-                IOptions<StoreConfiguration> config =  services.GetService<IOptions<StoreConfiguration>>()!;
+                IOptions<StoreConfiguration> config = services.GetService<IOptions<StoreConfiguration>>()!;
                 return new CosmosClient(config.Value.ConnectionString);
             });
 
@@ -36,7 +32,7 @@ public class Startup : FunctionsStartup
             });
         });
 
-        builder.Services.AddReviewBot(services =>
+        services.AddReviewBot(services =>
         {
             services.AddScoped<IQueryReviews, Latest10Query>(services =>
             {
@@ -47,24 +43,27 @@ public class Startup : FunctionsStartup
             });
         });
 
-        builder.Services.BindConfiguration<AppInsightsConfig>("ApplicationInsights");
-        builder.Services.AddTransient<IStoreConfiguration, CosmosConfigurationStore>(services =>
+        services.BindConfiguration<AppInsightsConfig>("ApplicationInsights");
+        services.AddTransient<IStoreConfiguration, CosmosConfigurationStore>(services =>
         {
-            // TODO: move all cosmos related stuff to Azure project
             var cosmos = services.GetService<CosmosClient>()!;
             var container = cosmos.GetDatabase("bot-db").GetContainer("reviewbot-config");
             return new CosmosConfigurationStore(container);
         });
 
-        builder.Services.AddLogging(l =>
+        services.AddLogging(l =>
         {
             l.AddApplicationInsights(
                 c =>
                 {
-                    var aiConfig = builder.Services.BuildServiceProvider().GetService<IOptions<AppInsightsConfig>>();
+                    var aiConfig = services.BuildServiceProvider().GetService<IOptions<AppInsightsConfig>>();
                     c.ConnectionString = aiConfig.Value.ConnectionString;
                 },
                 _ => { });
         });
-    }
-}
+    })
+    .ConfigureFunctionsWorkerDefaults()
+    .Build();
+
+await host.RunAsync();
+
