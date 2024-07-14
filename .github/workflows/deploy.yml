@@ -51,9 +51,14 @@ jobs:
 
     - name: Publish
       uses: softprops/action-gh-release@v1
+      if: env.IS_MAIN
       with:
         files: $ARTIFACT
-        prerelease: ${{ ENV.IS_PREVIEW }}
+
+    - name: Preview Package
+      if: env.IS_PREVIEW
+      shell: bash
+      run: unzip -l $ARTIFACT
 
     - name: OIDC Login to Azure Public Cloud
       uses: azure/login@v1
