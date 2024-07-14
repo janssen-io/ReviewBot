@@ -2,10 +2,6 @@ using JanssenIo.ReviewBot.ArchiveParser;
 using JanssenIo.ReviewBot.Core;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System;
 
 namespace JanssenIo.ReviewBot.Azure;
 
@@ -34,7 +30,7 @@ public class ParseArchive
     const string dailyAtSix = "0 0 6 * * *";
 
     [Function(nameof(ParseArchive))]
-    public async Task Run([TimerTrigger(dailyAtSix)] TimerInfo timer, ILogger<ParseArchive> log)
+    public async Task Run([TimerTrigger(dailyAtSix)] TimerInfo timer)
     {
         try
         {
