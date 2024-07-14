@@ -8,7 +8,7 @@ on:
 
 permissions:
   id-token: write
-  contents: read
+  contents: write 
 
 env:
   AZURE_PROJ: "JanssenIo.ReviewBot.Azure/JanssenIo.ReviewBot.Azure.csproj"
@@ -52,7 +52,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       if: ${{ env.IS_MAIN == 'true' }}
       with:
-        files: $ARTIFACT
+        files: ${{ env.ARTIFACT }}
 
     - name: Preview Package
       if: ${{ env.IS_MAIN == 'false' }}
