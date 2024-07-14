@@ -1,4 +1,5 @@
 param botId string
+param packageUrl string
 param location string = resourceGroup().location
 
 resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
@@ -114,11 +115,15 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
         }
         {
           name: 'WEBSITE_RUN_FROM_PACKAGE'
-          value: 'https://github.com/janssen-io/ReviewBot/releases/latest/download/functions.zip'
+          value: packageUrl
         }
         {
           name: 'ApplicationInsights__ConnectionString'
           value: appInsights.properties.ConnectionString
+        }
+        {
+          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          value: appInsights.properties.InstrumentationKey
         }
         {
           name: 'Logging__LogLevel__Default'
