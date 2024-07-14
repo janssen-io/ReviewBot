@@ -4,10 +4,19 @@ on:
   push:
     tags: [ 'v*.*.*' ]
   workflow_dispatch: 
+  pull_request:
 
 permissions:
   id-token: write
   contents: read
+
+env:
+  AZURE_PROJ: "JanssenIo.ReviewBot.Azure/JanssenIo.ReviewBot.Azure.csproj"
+  RELEASE_DIR: "dist"
+  INFRA_AS_CODE: "reviewbot.bicep"
+  ARTIFACT: functions.zip
+  IS_MAIN: ${{ github.ref == 'refs/heads/main' }}
+  IS_PREVIEW: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   deployment:
@@ -31,19 +40,20 @@ jobs:
       run: dotnet test --no-build --verbosity normal -c Release
 
     - name: Publish
-      run: dotnet publish -c Release -r linux-x64 -o dist JanssenIo.ReviewBot.Azure/JanssenIo.ReviewBot.Azure.csproj
+      run: dotnet publish -c Release -r linux-x64 -o $RELEASE_DIR $AZURE_PROJ
 
     - name: Create Release Package
       shell: bash
       run: |
-        cd dist
-        zip ../functions.zip -r .
+        cd $RELEASE_DIR
+        zip ../$ARTIFACT -r .
         cd -
 
     - name: Publish
       uses: softprops/action-gh-release@v1
       with:
-        files: "functions.zip"
+        files: $ARTIFACT
+        prerelease: ${{ ENV.IS_PREVIEW }}
 
     - name: OIDC Login to Azure Public Cloud
       uses: azure/login@v1
@@ -54,9 +64,24 @@ jobs:
 
     - name: Deploy Bicep file
       uses: azure/arm-deploy@v1
+      if: env.IS_MAIN
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ secrets.AZURE_RESOURCEGROUP_NAME }}
-        template: ./reviewbot.bicep
+        template: ${{ ENV.INFRA_AS_CODE }}
         failOnStdErr: false
+
+    - name: Validate Bicep files
+      if: ENV.IS_PREVIEW
+      run: >
+        az deployment group validate
+          --resource-group ${{ secrets.AZURE_RESOURCEGROUP_NAME }}
+          --template-file $INFRA_AS_CODE
+
+    - name: What-if Bicep files
+      if: github.ref != 'refs/heads/main'
+      run: >
+        az deployment group what-if
+          --resource-group ${{ secrets.AZURE_RESOURCEGROUP_NAME }}
+          --template-file $INFRA_AS_CODE
 
