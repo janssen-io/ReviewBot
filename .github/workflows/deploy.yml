@@ -16,7 +16,6 @@ env:
   INFRA_AS_CODE: "reviewbot.bicep"
   ARTIFACT: functions.zip
   IS_MAIN: ${{ github.ref == 'refs/heads/main' }}
-  IS_PREVIEW: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   deployment:
@@ -51,12 +50,12 @@ jobs:
 
     - name: Publish
       uses: softprops/action-gh-release@v1
-      if: env.IS_MAIN
+      if: ${{ env.IS_MAIN == 'true' }}
       with:
         files: $ARTIFACT
 
     - name: Preview Package
-      if: env.IS_PREVIEW
+      if: ${{ env.IS_MAIN == 'false' }}
       shell: bash
       run: unzip -l $ARTIFACT
 
@@ -69,7 +68,7 @@ jobs:
 
     - name: Deploy Bicep file
       uses: azure/arm-deploy@v1
-      if: env.IS_MAIN
+      if: ${{ env.IS_MAIN == 'true' }}
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ secrets.AZURE_RESOURCEGROUP_NAME }}
@@ -77,14 +76,14 @@ jobs:
         failOnStdErr: false
 
     - name: Validate Bicep files
-      if: ENV.IS_PREVIEW
+      if: ${{ env.IS_MAIN == 'false' }}
       run: >
         az deployment group validate
           --resource-group ${{ secrets.AZURE_RESOURCEGROUP_NAME }}
           --template-file $INFRA_AS_CODE
 
     - name: What-if Bicep files
-      if: github.ref != 'refs/heads/main'
+      if: ${{ env.IS_MAIN == 'false' }}
       run: >
         az deployment group what-if
           --resource-group ${{ secrets.AZURE_RESOURCEGROUP_NAME }}
