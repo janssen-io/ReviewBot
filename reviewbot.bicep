@@ -1,12 +1,4 @@
-// Log Analytics
-// App Insights
-// KeyVault (RBAC)
-// Storage 
-// CosmosDB (with Diagnostic Settings)
-// Serverless Function
-// RBAC access to key vault for function
-// RBAC access to CosmosDB
-
+param botId string
 param location string = resourceGroup().location
 
 resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
@@ -138,7 +130,7 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
         }
         {
           name: 'ReviewBot:AppId'
-          value: '-4Xctu9CYx4UWQ'
+          value: botId
         }
         {
           name: 'ReviewBot:AppSecret'
