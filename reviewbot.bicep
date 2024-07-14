@@ -55,6 +55,19 @@ resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
   }
 }
 
+resource cosmosDb 'Microsoft.DocumentDB/databaseAccounts@2024-05-15' existing = {
+  name: 'jio-flockbots-cdb'
+}
+
+var connectionStringSecretName = 'StoreConnectionString'
+resource connectionStringSecret 'Microsoft.KeyVault/vaults/secrets@2023-07-01' = {
+  parent: keyVault
+  name: connectionStringSecretName
+  properties: {
+    value: cosmosDb.listConnectionStrings().connectionStrings[0].connectionString
+  }
+}
+
 resource storage 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   name: 'jioredditst'
   location: location
@@ -64,7 +77,6 @@ resource storage 'Microsoft.Storage/storageAccounts@2023-05-01' = {
     accessTier: 'Hot'
     minimumTlsVersion: 'TLS1_2'
   }
-
 }
 
 resource hostingPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
@@ -138,7 +150,11 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
         }
         {
           name: 'Store:ConnectionString'
-          value: '@Microsoft.KeyVault(SecretUri=${keyVault.properties.vaultUri}/secrets/StoreConnectionString)'
+          value: '@Microsoft.KeyVault(SecretUri=${keyVault.properties.vaultUri}/secrets/${connectionStringSecretName})'
+        }
+        {
+          name: 'WEBSITE_RUN_FROM_PACKAGE'
+          value: 'https://github.com/janssen-io/ReviewBot/releases/latest/download/functions.zip'
         }
       ]
       ftpsState: 'FtpsOnly'
@@ -163,16 +179,3 @@ resource functionAppSecretUser 'Microsoft.Authorization/roleAssignments@2022-04-
     principalType: 'ServicePrincipal'
   }
 }
-
-resource cosmosDb 'Microsoft.DocumentDB/databaseAccounts@2024-05-15' existing = {
-  name: 'jio-flockbots-cdb'
-}
-
-resource connectionStringSecret 'Microsoft.KeyVault/vaults/secrets@2023-07-01' = {
-  parent: keyVault
-  name: 'StoreConnectionString'
-  properties: {
-    value: cosmosDb.listConnectionStrings().connectionStrings[0].connectionString
-  }
-}
-
