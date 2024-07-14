@@ -39,9 +39,9 @@ For Azure, the following secrets must exist in the key vault:
 
 | Key | Description | Notes |
 |-----|-------------|--------
-| ReviewBot:AppSecret  | The Client Secret of the Bot in Reddit | Required for authentication with Reddit |
-| ReviewBot:RefreshToken  | The Refresh Token from the OAuth2 flow | Required by the .NET Library to authenticate with Reddit |
-| Store:ConnectionString  | The credentials to connect with CosmosDB | Required to read and write the local review cache |
+| ReviewBot__AppSecret  | The Client Secret of the Bot in Reddit | Required for authentication with Reddit |
+| ReviewBot__RefreshToken  | The Refresh Token from the OAuth2 flow | Required by the .NET Library to authenticate with Reddit |
+| Store__ConnectionString  | The credentials to connect with CosmosDB | Required to read and write the local review cache |
 
 ## Deployment
 The Azure infrastructure can be deployed using the Bicep file in the root of the
