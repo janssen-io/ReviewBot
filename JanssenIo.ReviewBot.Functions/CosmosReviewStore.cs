@@ -42,8 +42,11 @@ namespace JanssenIo.ReviewBot.Functions
             }
         }
 
-        public Task SaveMany(IEnumerable<Review> reviews)
-            => Task.WhenAll(reviews.Select(Save));
+        public async Task SaveMany(IEnumerable<Review> reviews)
+        {
+            await Task.WhenAll(reviews.Select(Save));
+            logger.LogInformation(new EventId(1), "ArchiveParser completed successfully.");
+        }
 
         public Review[] Where(Expression<Func<Review, bool>> filter, string author)
             => container

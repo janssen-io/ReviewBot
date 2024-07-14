@@ -18,19 +18,6 @@ var host = new HostBuilder()
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
 
-        // Configure ILogger
-        //services.BindConfiguration<AppInsightsConfig>("ApplicationInsights");
-        //services.AddLogging(l =>
-        //{
-        //    l.AddApplicationInsights(
-        //    c =>
-        //    {
-        //        var aiConfig = services.BuildServiceProvider().GetService<IOptions<AppInsightsConfig>>()!.Value;
-        //        c.ConnectionString = aiConfig.ConnectionString;
-        //    },
-        //    _ => { });
-        //});
-
         // Bot run config from CosmosDB
         services.AddTransient<IStoreConfiguration, CosmosConfigurationStore>(services =>
         {
@@ -70,6 +57,18 @@ var host = new HostBuilder()
                 var container = cosmos.GetDatabase("bot-db").GetContainer("whiskyreviews");
                 return new Latest10Query(new CosmosReviewStore(logger, container));
             });
+        });
+    })
+    .ConfigureLogging(logging =>
+    {
+        logging.Services.Configure<LoggerFilterOptions>(options =>
+        {
+            LoggerFilterRule defaultRule = options.Rules.FirstOrDefault(rule => rule.ProviderName
+                == "Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider");
+            if (defaultRule is not null)
+            {
+                options.Rules.Remove(defaultRule);
+            }
         });
     })
     .Build();

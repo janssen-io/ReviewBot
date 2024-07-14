@@ -16,8 +16,6 @@ public static class ServiceCollectionExtensions
         services.AddTransient<Parse.IParseArchives, Parse.GoogleSheetsParser>();
 
         registerReviewStore(services);
-
-        services.AddLogging();
     }
 
     public static void BindConfiguration<T>(this IServiceCollection services, string section)
