@@ -125,23 +125,23 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
           value: 'dotnet-isolated'
         }
         {
-          name: 'Download:Location'
+          name: 'Download__Location'
           value: 'https://docs.google.com/spreadsheets/d/1X1HTxkI6SqsdpNSkSSivMzpxNT-oeTbjFFDdEkXD30o/gviz/tq'
         }
         {
-          name: 'ReviewBot:AppId'
+          name: 'ReviewBot__AppId'
           value: botId
         }
         {
-          name: 'ReviewBot:AppSecret'
+          name: 'ReviewBot__AppSecret'
           value: '@Microsoft.KeyVault(SecretUri=${keyVault.properties.vaultUri}/secrets/AppSecret)'
         }
         {
-          name: 'ReviewBot:RefreshToken'
+          name: 'ReviewBot__RefreshToken'
           value: '@Microsoft.KeyVault(SecretUri=${keyVault.properties.vaultUri}/secrets/RefreshToken)'
         }
         {
-          name: 'Store:ConnectionString'
+          name: 'Store__ConnectionString'
           value: '@Microsoft.KeyVault(SecretUri=${keyVault.properties.vaultUri}/secrets/${connectionStringSecretName})'
         }
       ]
