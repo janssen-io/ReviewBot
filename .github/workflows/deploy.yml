@@ -15,7 +15,7 @@ env:
   RELEASE_DIR: "dist"
   INFRA_AS_CODE: "reviewbot.bicep"
   ARTIFACT: functions.zip
-  IS_MAIN: ${{ github.ref == 'refs/heads/main' }}
+  IS_MAIN: ${{ github.event.base_ref == 'refs/heads/main' }}
 
 jobs:
   deployment:
@@ -30,7 +30,7 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore $AZURE_PROJ
 
     - name: Build
       run: dotnet build --no-restore -c Release $AZURE_PROJ
@@ -73,6 +73,7 @@ jobs:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ vars.AZURE_RESOURCEGROUP_NAME }}
         template: ${{ ENV.INFRA_AS_CODE }}
+        parameters: "botId=${{ vars.BOT_CLIENT_ID }}"
         failOnStdErr: false
 
     - name: Validate Bicep files
@@ -80,12 +81,14 @@ jobs:
       run: |
         az deployment group validate \
           --resource-group ${{ vars.AZURE_RESOURCEGROUP_NAME }} \
-          --template-file $INFRA_AS_CODE
+          --template-file $INFRA_AS_CODE \
+          --parameters botId='${{ vars.BOT_CLIENT_ID }}'
 
     - name: What-if Bicep files
       if: ${{ env.IS_MAIN == 'false' }}
       run: |
         az deployment group what-if \
           --resource-group ${{ vars.AZURE_RESOURCEGROUP_NAME }} \
-          --template-file $INFRA_AS_CODE
+          --template-file $INFRA_AS_CODE \
+          --parameters botId='${{ vars.BOT_CLIENT_ID }}'
 
