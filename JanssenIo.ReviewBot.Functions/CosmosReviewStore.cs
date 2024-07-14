@@ -9,7 +9,7 @@ using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace JanssenIo.ReviewBot.Azure
+namespace JanssenIo.ReviewBot.Functions
 {
     internal class CosmosReviewStore : Store.ISaveReviews, IQueryReviews
     {

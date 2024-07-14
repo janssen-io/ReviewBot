@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace JanssenIo.ReviewBot.Azure
+namespace JanssenIo.ReviewBot.Functions
 {
     internal class CosmosConfigurationStore : IStoreConfiguration
     {

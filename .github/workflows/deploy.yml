@@ -11,7 +11,7 @@ permissions:
   contents: write 
 
 env:
-  AZURE_PROJ: "JanssenIo.ReviewBot.Azure/JanssenIo.ReviewBot.Azure.csproj"
+  AZURE_PROJ: "JanssenIo.ReviewBot.Functions/JanssenIo.ReviewBot.Functions.csproj"
   RELEASE_DIR: "dist"
   INFRA_AS_CODE: "reviewbot.bicep"
   ARTIFACT: functions.zip

@@ -3,7 +3,7 @@ using static JanssenIo.ReviewBot.Replies.ReviewBot;
 using Microsoft.Extensions.Logging;
 using Microsoft.Azure.Functions.Worker;
 
-namespace JanssenIo.ReviewBot.Azure;
+namespace JanssenIo.ReviewBot.Functions;
 
 public class Reply
 {
