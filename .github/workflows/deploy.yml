@@ -77,15 +77,15 @@ jobs:
 
     - name: Validate Bicep files
       if: ${{ env.IS_MAIN == 'false' }}
-      run: >
-        az deployment group validate
-          --resource-group ${{ vars.AZURE_RESOURCEGROUP_NAME }}
+      run: |
+        az deployment group validate \
+          --resource-group ${{ vars.AZURE_RESOURCEGROUP_NAME }} \
           --template-file $INFRA_AS_CODE
 
     - name: What-if Bicep files
       if: ${{ env.IS_MAIN == 'false' }}
-      run: >
-        az deployment group what-if
-          --resource-group ${{ vars.AZURE_RESOURCEGROUP_NAME }}
+      run: |
+        az deployment group what-if \
+          --resource-group ${{ vars.AZURE_RESOURCEGROUP_NAME }} \
           --template-file $INFRA_AS_CODE
 
