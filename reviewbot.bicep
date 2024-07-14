@@ -121,6 +121,10 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
           value: '~4'
         }
         {
+          name: 'WEBSITE_RUN_FROM_PACKAGE'
+          value: 'https://github.com/janssen-io/ReviewBot/releases/latest/download/functions.zip'
+        }
+        {
           name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
           value: appInsights.properties.InstrumentationKey
         }
@@ -131,10 +135,6 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
         {
           name: 'Download:Location'
           value: 'https://docs.google.com/spreadsheets/d/1X1HTxkI6SqsdpNSkSSivMzpxNT-oeTbjFFDdEkXD30o/gviz/tq'
-        }
-        {
-          name: 'FUNCTIONS_EXTENSION_VERSION'
-          value: '~4'
         }
         {
           name: 'ReviewBot:AppId'
@@ -151,10 +151,6 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
         {
           name: 'Store:ConnectionString'
           value: '@Microsoft.KeyVault(SecretUri=${keyVault.properties.vaultUri}/secrets/${connectionStringSecretName})'
-        }
-        {
-          name: 'WEBSITE_RUN_FROM_PACKAGE'
-          value: 'https://github.com/janssen-io/ReviewBot/releases/latest/download/functions.zip'
         }
       ]
       ftpsState: 'FtpsOnly'
