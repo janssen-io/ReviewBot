@@ -117,8 +117,12 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
           value: 'https://github.com/janssen-io/ReviewBot/releases/latest/download/functions.zip'
         }
         {
-          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          value: appInsights.properties.InstrumentationKey
+          name: 'ApplicationInsights__ConnectionString'
+          value: appInsights.properties.ConnectionString
+        }
+        {
+          name: 'Logging__LogLevel__Default'
+          value: 'Error'
         }
         {
           name: 'FUNCTIONS_WORKER_RUNTIME'
