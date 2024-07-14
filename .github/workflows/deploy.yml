@@ -3,7 +3,6 @@ name: Deploy
 on:
   push:
     tags: [ 'v*.*.*' ]
-  workflow_dispatch: 
   pull_request:
 
 permissions:
@@ -48,7 +47,7 @@ jobs:
         zip ../$ARTIFACT -r .
         cd -
 
-    - name: Publish
+    - name: Create Release
       uses: softprops/action-gh-release@v1
       if: ${{ env.IS_MAIN == 'true' }}
       with:
@@ -58,6 +57,16 @@ jobs:
       if: ${{ env.IS_MAIN == 'false' }}
       shell: bash
       run: unzip -l $ARTIFACT
+
+    - name: Set PACKAGE_URL = latest
+      if: ${{ env.IS_MAIN == 'false' }}
+      shell: bash
+      run: echo "PACKAGE_URL=https://github.com/janssen-io/ReviewBot/releases/latest/download/functions.zip" >> "$GITHUB_ENV"
+
+    - name: Set PACKAGE_URL = tag
+      if: ${{ env.IS_MAIN == 'true' }}
+      shell: bash
+      run: echo "PACKAGE_URL=https://github.com/janssen-io/ReviewBot/releases/download/v1.0.4/functions.zip" >> "$GITHUB_ENV"
 
     - name: OIDC Login to Azure Public Cloud
       uses: azure/login@v1
@@ -73,7 +82,7 @@ jobs:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ vars.AZURE_RESOURCEGROUP_NAME }}
         template: ${{ ENV.INFRA_AS_CODE }}
-        parameters: "botId=${{ vars.BOT_CLIENT_ID }}"
+        parameters: "botId='${{ vars.BOT_CLIENT_ID }}' packageUrl='${{ env.PACKAGE_URL }}'"
         failOnStdErr: false
 
     - name: Validate Bicep files
@@ -82,7 +91,7 @@ jobs:
         az deployment group validate \
           --resource-group ${{ vars.AZURE_RESOURCEGROUP_NAME }} \
           --template-file $INFRA_AS_CODE \
-          --parameters botId='${{ vars.BOT_CLIENT_ID }}'
+          --parameters botId='${{ vars.BOT_CLIENT_ID }}' packageUrl='${{ env.PACKAGE_URL }}'
 
     - name: What-if Bicep files
       if: ${{ env.IS_MAIN == 'false' }}
@@ -90,5 +99,5 @@ jobs:
         az deployment group what-if \
           --resource-group ${{ vars.AZURE_RESOURCEGROUP_NAME }} \
           --template-file $INFRA_AS_CODE \
-          --parameters botId='${{ vars.BOT_CLIENT_ID }}'
+          --parameters botId='${{ vars.BOT_CLIENT_ID }}' packageUrl='${{ env.PACKAGE_URL }}'
 
