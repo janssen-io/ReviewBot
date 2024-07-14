@@ -9,7 +9,7 @@ The bot can run locally or in Azure. In order to list the reviews rapidly, the
 bot keeps a local cache of all reviews in a NoSQL database. In Azure it uses
 CosmosDB. When run locally, it uses LiteDB as a file-based NoSQL database.
 
-To run the bot in Azure, deploy the JanssenIo.ReviewBot.Azure project to
+To run the bot in Azure, deploy the JanssenIo.ReviewBot.Functions project to
 an Azure Function.
 
 To run the bot locally, start the JanssenIo.ReviewBot.ArchiveParser project
@@ -39,9 +39,9 @@ For Azure, the following secrets must exist in the key vault:
 
 | Key | Description | Notes |
 |-----|-------------|--------
-| ReviewBot__AppSecret  | The Client Secret of the Bot in Reddit | Required for authentication with Reddit |
-| ReviewBot__RefreshToken  | The Refresh Token from the OAuth2 flow | Required by the .NET Library to authenticate with Reddit |
-| Store__ConnectionString  | The credentials to connect with CosmosDB | Required to read and write the local review cache |
+| AppSecret  | The Client Secret of the Bot in Reddit | Required for authentication with Reddit |
+| RefreshToken  | The Refresh Token from the OAuth2 flow | Required by the .NET Library to authenticate with Reddit |
+| ConnectionString  | The credentials to connect with CosmosDB | Required to read and write the local review cache |
 
 ## Deployment
 The Azure infrastructure can be deployed using the Bicep file in the root of the
