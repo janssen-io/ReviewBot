@@ -1,0 +1,91 @@
+name: Deploy
+
+on:
+  push:
+    tags: [ 'v*.*.*' ]
+  workflow_dispatch: 
+  pull_request:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AZURE_PROJ: "JanssenIo.ReviewBot.Azure/JanssenIo.ReviewBot.Azure.csproj"
+  RELEASE_DIR: "dist"
+  INFRA_AS_CODE: "reviewbot.bicep"
+  ARTIFACT: functions.zip
+  IS_MAIN: ${{ github.ref == 'refs/heads/main' }}
+
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --no-restore -c Release $AZURE_PROJ
+
+    - name: Test
+      run: dotnet test --no-build --verbosity normal -c Release $AZURE_PROJ
+
+    - name: Publish
+      run: dotnet publish -c Release -r linux-x64 -o $RELEASE_DIR $AZURE_PROJ
+
+    - name: Create Release Package
+      shell: bash
+      run: |
+        cd $RELEASE_DIR
+        zip ../$ARTIFACT -r .
+        cd -
+
+    - name: Publish
+      uses: softprops/action-gh-release@v1
+      if: ${{ env.IS_MAIN == 'true' }}
+      with:
+        files: $ARTIFACT
+
+    - name: Preview Package
+      if: ${{ env.IS_MAIN == 'false' }}
+      shell: bash
+      run: unzip -l $ARTIFACT
+
+    - name: OIDC Login to Azure Public Cloud
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }} 
+
+    - name: Deploy Bicep file
+      uses: azure/arm-deploy@v1
+      if: ${{ env.IS_MAIN == 'true' }}
+      with:
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        resourceGroupName: ${{ vars.AZURE_RESOURCEGROUP_NAME }}
+        template: ${{ ENV.INFRA_AS_CODE }}
+        failOnStdErr: false
+
+    - name: Validate Bicep files
+      if: ${{ env.IS_MAIN == 'false' }}
+      run: |
+        az deployment group validate \
+          --resource-group ${{ vars.AZURE_RESOURCEGROUP_NAME }} \
+          --template-file $INFRA_AS_CODE
+
+    - name: What-if Bicep files
+      if: ${{ env.IS_MAIN == 'false' }}
+      run: |
+        az deployment group what-if \
+          --resource-group ${{ vars.AZURE_RESOURCEGROUP_NAME }} \
+          --template-file $INFRA_AS_CODE
+
