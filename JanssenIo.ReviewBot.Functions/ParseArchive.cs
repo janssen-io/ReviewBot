@@ -32,6 +32,7 @@ public class ParseArchive
     [Function(nameof(ParseArchive))]
     public async Task Run([TimerTrigger(dailyAtSix)] TimerInfo timer)
     {
+        logger.LogTrace("Triggered Archive Parser - Downloading and Parsing Archive");
         try
         {
             using Stream archive = await downloader.Download();

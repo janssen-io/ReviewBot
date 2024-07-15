@@ -21,6 +21,7 @@ public class Reply
     [Function("Reply")]
     public void Run([TimerTrigger(everyFiveMinutes)] TimerInfo timer)
     {
+        logger.LogTrace("Triggered ReviewBot - Checking Inbox");
         inbox.ReadMessages();
     }
 }
