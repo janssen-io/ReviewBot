@@ -40,7 +40,7 @@ public class ParseArchive
 
             await inserter.SaveMany(reviews);
 
-            logger.LogInformation(new EventId(1), "ArchiveParser completed successfully.");
+            logger.LogTrace(new EventId(1), "ArchiveParser completed successfully.");
             await UpdateLastRun(DateTime.UtcNow);
         }
         catch (Exception e)

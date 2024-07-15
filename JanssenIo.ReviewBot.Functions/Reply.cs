@@ -21,8 +21,6 @@ public class Reply
     [Function("Reply")]
     public void Run([TimerTrigger(everyFiveMinutes)] TimerInfo timer)
     {
-        this.logger.LogInformation("C# HTTP trigger function processed a request.");
-
         inbox.ReadMessages();
     }
 }
