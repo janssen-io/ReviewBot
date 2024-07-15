@@ -16,7 +16,8 @@ namespace JanssenIo.ReviewBot.Replies
     {
         public static readonly EventId UnexpectedErrorId = new EventId(5000, "Unexpected Bot Error");
         public static readonly EventId NoCommandId = new EventId(5001, "Message Without Command");
-        public static readonly EventId RepliedId = new EventId(5002, "Message Without Command");
+        public static readonly EventId RepliedId = new EventId(5002, "Message With Command");
+        public static readonly EventId RepliedWithId = new EventId(5003, "Message Body and Reply");
 
         public class Configuration
         {
@@ -125,7 +126,8 @@ namespace JanssenIo.ReviewBot.Replies
                 comment.AppendLine("^(More info? Ask) [^(FlockOnFire)](https://reddit.com/u/flockonfire) ^(or click) [^(here.)](https://github.com/FlockBots/review-bot)");
 
                 var replyText = comment.ToString();
-                logger.LogInformation(RepliedId, "{Author} mentioned me with a command: {Body}" + Environment.NewLine + "{ReplyText}", message.Author, message.Body, replyText);
+                logger.LogInformation(RepliedId, "{Author} mentioned me with a command", message.Author);
+                logger.LogTrace(RepliedWithId, "{Body}" + Environment.NewLine + "{ReplyText}", message.Body, replyText);
 
                 if (message.WasComment)
                 {

@@ -1,4 +1,5 @@
 ﻿using JanssenIo.ReviewBot.Core;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Globalization;
@@ -13,6 +14,9 @@ namespace JanssenIo.ReviewBot.ArchiveParser
     {
         public const string LastRunKey = "LastRunDate";
         public const string LastRunFormat = "yyyy-MM-dd";
+
+        private static readonly EventId DownloadStarted = new EventId(6000, "Download Started");
+
         public class Configuration
         {
             public DateTime? LastRunDate { get; set; }
@@ -30,17 +34,20 @@ namespace JanssenIo.ReviewBot.ArchiveParser
             private readonly HttpClient httpClient;
             private readonly Configuration config;
             private readonly IStoreConfiguration runtimeConfig;
+            private readonly ILogger<IFetchArchives> logger;
 
-            public GoogleSheetsDownloader(HttpClient httpClient, IOptions<Configuration> config, IStoreConfiguration runtimeConfig)
+            public GoogleSheetsDownloader(HttpClient httpClient, IOptions<Configuration> config, IStoreConfiguration runtimeConfig, ILogger<IFetchArchives> logger)
             {
                 this.httpClient = httpClient;
                 this.config = config.Value;
                 this.runtimeConfig = runtimeConfig;
+                this.logger = logger;
             }
 
             public async Task<Stream> Download()
             {
                 Uri archiveUri = await GetArchiveUri();
+                this.logger.LogInformation(DownloadStarted, "Downloading reviews from {ArchiveUri}", archiveUri);
 
                 var response = await httpClient.GetAsync(archiveUri);
                 response.EnsureSuccessStatusCode();

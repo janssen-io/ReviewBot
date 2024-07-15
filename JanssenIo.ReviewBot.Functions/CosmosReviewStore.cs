@@ -31,7 +31,7 @@ namespace JanssenIo.ReviewBot.Functions
             catch (CosmosException e)
                 when (e.StatusCode == HttpStatusCode.TooManyRequests)
             {
-                logger.LogInformation("Received HTTP 429, backing off for 5 seconds");
+                logger.LogTrace("Received HTTP 429, backing off for 5 seconds");
                 await Task.Delay(TimeSpan.FromSeconds(5));
                 await Save(review);
             }

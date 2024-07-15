@@ -32,6 +32,7 @@ public class ParseArchive
     [Function(nameof(ParseArchive))]
     public async Task Run([TimerTrigger(dailyAtSix)] TimerInfo timer)
     {
+        logger.LogTrace("Triggered Archive Parser - Downloading and Parsing Archive");
         try
         {
             using Stream archive = await downloader.Download();
@@ -40,7 +41,7 @@ public class ParseArchive
 
             await inserter.SaveMany(reviews);
 
-            logger.LogInformation(new EventId(1), "ArchiveParser completed successfully.");
+            logger.LogTrace(new EventId(1), "ArchiveParser completed successfully.");
             await UpdateLastRun(DateTime.UtcNow);
         }
         catch (Exception e)
