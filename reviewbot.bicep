@@ -38,6 +38,7 @@ resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
     properties:{
       retentionInDays: 30
       totalRetentionInDays: 30
+      plan: 'Analytics'
       schema: {
         name: table
       }
