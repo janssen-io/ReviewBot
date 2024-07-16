@@ -12,7 +12,7 @@ using Microsoft.Extensions.Options;
 using StoreConfiguration = JanssenIo.ReviewBot.Functions.StoreConfiguration;
 
 var host = new HostBuilder()
-    .ConfigureFunctionsWebApplication()
+    .ConfigureFunctionsWorkerDefaults()
     .ConfigureServices(services =>
     {
         services.AddApplicationInsightsTelemetryWorkerService();

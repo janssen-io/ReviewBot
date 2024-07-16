@@ -2,6 +2,21 @@ param botId string
 param packageUrl string
 param location string = resourceGroup().location
 
+var tablesExemptFromWorkspaceRetention = [
+  'AppAvailabilityResults'
+  'AppBrowserTimings'
+  'AppDependencies'
+  'AppEvents'
+  'AppExceptions'
+  'AppMetrics'
+  'AppPageViews'
+  'AppPerformanceCounters'
+  'AppRequests'
+  'AppSystemEvents'
+  'AppTraces'
+  'AzureActivity'
+  'Usage'
+]
 resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
   name: 'jio-reddit-logs'
   location: location
@@ -17,6 +32,18 @@ resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
     publicNetworkAccessForIngestion: 'Enabled'
     publicNetworkAccessForQuery: 'Enabled'
   }
+
+  resource appTable 'tables@2022-10-01' = [for table in tablesExemptFromWorkspaceRetention: {
+    name: table
+    properties:{
+      retentionInDays: 30
+      totalRetentionInDays: 30
+      plan: 'Analytics'
+      schema: {
+        name: table
+      }
+    }
+  }]
 }
 
 resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
@@ -48,6 +75,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
   }
 }
 
+// Deployed by hand, because only one free tier can exist in the subscription
 resource cosmosDb 'Microsoft.DocumentDB/databaseAccounts@2024-05-15' existing = {
   name: 'jio-flockbots-cdb'
 }
@@ -94,6 +122,7 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
   properties: {
     reserved: true
     serverFarmId: hostingPlan.id
+    dailyMemoryTimeQuota: 15000
     siteConfig: {
       linuxFxVersion: 'DOTNET-ISOLATED|8.0'
       appSettings: [
