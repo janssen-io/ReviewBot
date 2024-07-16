@@ -14,8 +14,6 @@ var tablesExemptFromWorkspaceRetention = [
   'AppRequests'
   'AppSystemEvents'
   'AppTraces'
-  'AzureActivity'
-  'Usage'
 ]
 resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
   name: 'jio-reddit-logs'
