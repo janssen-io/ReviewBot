@@ -123,7 +123,7 @@ namespace JanssenIo.ReviewBot.Replies
                 }
 
                 comment.AppendLine("___");
-                comment.AppendLine("^(More info? Ask) [^(FlockOnFire)](https://reddit.com/u/flockonfire) ^(or click) [^(here.)](https://github.com/FlockBots/review-bot)");
+                comment.AppendLine("^(More info? Ask) [^(FlockOnFire)](https://reddit.com/u/flockonfire) ^(or click) [^(here.)](https://github.com/janssen-io/ReviewBot/)");
 
                 var replyText = comment.ToString();
                 logger.LogInformation(RepliedId, "{Author} mentioned me with a command", message.Author);

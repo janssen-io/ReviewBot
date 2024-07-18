@@ -149,10 +149,6 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
           value: appInsights.properties.ConnectionString
         }
         {
-          name: 'ApplicationInsights__ConnectionString'
-          value: appInsights.properties.ConnectionString
-        }
-        {
           name: 'FUNCTIONS_WORKER_RUNTIME'
           value: 'dotnet-isolated'
         }

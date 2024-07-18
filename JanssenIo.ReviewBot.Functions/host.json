@@ -3,14 +3,19 @@
   "logging": {
     "logLevel": {
       "default": "Error",
+      "Host.Aggregator": "Information",
+      "Host.Results": "Information",
       "Function.Reply.User": "Information",
       "Function.ParseArchive.User": "Information"
     },
     "applicationInsights": {
       "samplingSettings": {
         "isEnabled": true,
-        "excludedTypes": "Request"
+        "excludedTypes": "Request;Exception"
       }
+    },
+    "healthMonitor": {
+      "enabled": false
     }
   }
 }
