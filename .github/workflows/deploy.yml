@@ -40,6 +40,11 @@ jobs:
     - name: Publish
       run: dotnet publish -c Release -r linux-x64 -o $RELEASE_DIR $AZURE_PROJ
 
+    - name: Patch Reddit.NET
+      shell: bash
+      run: |
+        curl -o "$RELEASE_DIR/Reddit.NET.dll" https://github.com/janssen-io/sirkis-Reddit.NET/releases/latest/download/Reddit.NET.dll
+
     - name: Create Release Package
       shell: bash
       run: |
