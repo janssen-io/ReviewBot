@@ -31,17 +31,19 @@ resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
     publicNetworkAccessForQuery: 'Enabled'
   }
 
-  resource appTable 'tables@2022-10-01' = [for table in tablesExemptFromWorkspaceRetention: {
-    name: table
-    properties:{
-      retentionInDays: 30
-      totalRetentionInDays: 30
-      plan: 'Analytics'
-      schema: {
-        name: table
+  resource appTable 'tables@2022-10-01' = [
+    for table in tablesExemptFromWorkspaceRetention: {
+      name: table
+      properties: {
+        retentionInDays: 30
+        totalRetentionInDays: 30
+        plan: 'Analytics'
+        schema: {
+          name: table
+        }
       }
     }
-  }]
+  ]
 }
 
 resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
@@ -145,6 +147,10 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
           value: packageUrl
         }
         {
+          name: 'AzureFunctionsJobHost__aggregator__flushTimeout'
+          value: '00:05:00'
+        }
+        {
           name: 'ApplicationInsights_Connection_String'
           value: appInsights.properties.ConnectionString
         }
@@ -162,15 +168,15 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
         }
         {
           name: 'ReviewBot__AppSecret'
-          value: '@Microsoft.KeyVault(SecretUri=${keyVault.properties.vaultUri}/secrets/AppSecret)'
+          value: '@Microsoft.KeyVault(SecretUri=${keyVault.properties.vaultUri}secrets/AppSecret)'
         }
         {
           name: 'ReviewBot__RefreshToken'
-          value: '@Microsoft.KeyVault(SecretUri=${keyVault.properties.vaultUri}/secrets/RefreshToken)'
+          value: '@Microsoft.KeyVault(SecretUri=${keyVault.properties.vaultUri}secrets/RefreshToken)'
         }
         {
           name: 'Store__ConnectionString'
-          value: '@Microsoft.KeyVault(SecretUri=${keyVault.properties.vaultUri}/secrets/${connectionStringSecretName})'
+          value: '@Microsoft.KeyVault(SecretUri=${keyVault.properties.vaultUri}secrets/${connectionStringSecretName})'
         }
       ]
       ftpsState: 'FtpsOnly'

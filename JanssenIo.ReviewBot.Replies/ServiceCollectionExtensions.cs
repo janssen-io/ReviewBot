@@ -27,11 +27,14 @@ namespace JanssenIo.ReviewBot.Replies
             {
                 var config = services.GetService<IOptions<ReviewBot.Configuration>>()!.Value;
 
-                return new RedditClient(
+                var client = new RedditClient(
                     appId: config.AppId,
                     refreshToken: config.RefreshToken,
-                    appSecret: config.AppSecret);
+                    appSecret: config.AppSecret,
+                    userAgent: "/u/review_bot - Whisky Review Lister");
 
+
+                return client;
             });
 
             services.AddScoped<ReviewBot.InboxReplier>(services =>
