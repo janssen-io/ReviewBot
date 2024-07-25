@@ -2,10 +2,42 @@
 
 ReviewBot is a Reddit Bot that uses the Whisky Review Archive from
 [/r/scotch](https://www.reddit.com/r/Scotch/) to automatically list your latest
-reviews.
+reviews. It can be summoned in [/r/scotch](https://reddit.com/r/scotch), [/r/bourbon](https://reddit.com/r/bourbon), [/r/worldwhisky](https://reddit.com/r/worldwhisky).
 
-## Running
-The bot can run locally or in Azure. In order to list the reviews rapidly, the
+## Summoning
+If any of the following commands appear in the bot's inbox, he will reply accordingly.
+
+**List latest reviews**
+
+List up to 10 of the users latest reviews in any subreddit.
+
+    /u/review_bot latest
+
+**List latest reviews in \<subreddit\>**
+
+List up to 10 of the users latest reviews in the given subreddit. (Substitute \<subreddit\> with the subreddit name, e.g. /r/scotch)
+
+    /u/review_bot /r/<subreddit>
+
+**List latest reviews about \<bottle\>**
+
+List up to 10 of the users latest reviews about a certain bottle. This command searches for a substring, so asking for Talisker reviews might return reviews about Talisker Storm, Talisker 10yr and Talisker DE.
+As with the subreddit command, substitute \<bottle\> with the name of the bottle, but be sure to use single quotes or double quotes.
+
+    /u/review_bot '<bottle>'
+
+**List latest reviews about \<region\>**
+
+List up to 10 of the users latest reviews about bottles from a specific region. This command searches for a substring, so asking for "land" reviews will return reviews about bottles from both the Highlands and the Lowlands (and "Islands" if you didn't specify that further).
+
+As with the subreddit command, substitute \<region\> with the name of the bottle, but be sure to use single quotes or double quotes.
+
+    /u/review_bot '<region>'
+
+## Running / Installation
+Below are the technical details for if you want to run this bot yourself.
+
+The bot can run locally or in Microsoft Azure. In order to list the reviews rapidly, the
 bot keeps a local cache of all reviews in a NoSQL database. In Azure it uses
 CosmosDB. When run locally, it uses LiteDB as a file-based NoSQL database.
 
@@ -20,7 +52,7 @@ Whether the bot runs locally or in Azure, it only checks its inbox once. So it
 should be run on a timer trigger. The Azure Function uses a 5-minute timer
 trigger to do this. Locally, you could use cron.
 
-## Configuration
+### Configuration
 The bot requires a secrets.json file to run locally. 
 To create this file, run the `JanssenIo.ReviewBot.Replies/CreateSecrets.cs`
 script with the following environmnet variables set.
@@ -43,7 +75,7 @@ For Azure, the following secrets must exist in the key vault:
 | RefreshToken  | The Refresh Token from the OAuth2 flow | Required by the .NET Library to authenticate with Reddit |
 | ConnectionString  | The credentials to connect with CosmosDB | Required to read and write the local review cache |
 
-## Deployment
+### Deployment
 The Azure infrastructure can be deployed using the Bicep file in the root of the
 repository. In the .github folder there is a workflow that creates a release and
 deploy the infrastructure. The Azure Function then pulls the latest code from
